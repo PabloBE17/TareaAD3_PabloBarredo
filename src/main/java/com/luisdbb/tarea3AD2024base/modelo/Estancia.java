@@ -15,11 +15,11 @@ public class Estancia {
     private LocalDate fecha;
 	 @Column(name = "vip",  nullable = false)
     private boolean vip;
-    @ManyToOne
-    @JoinColumn(name = "id_parada")
+	 @ManyToOne
+	 @JoinColumn(name = "id_parada")
     private Parada parada;
-    @ManyToOne
-    @JoinColumn(name = "id_peregrino")
+	 @ManyToOne
+	 @JoinColumn(name = "id_peregrino")
     private Peregrino peregrino;
     
 

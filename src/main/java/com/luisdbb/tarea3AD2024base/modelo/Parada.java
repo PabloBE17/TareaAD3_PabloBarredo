@@ -19,10 +19,11 @@ public class Parada implements Serializable {
 	    private char region;
 	 @Column(name = "responsable", updatable = false, nullable = false)
 	    private String responsable;
-	    @ManyToMany(mappedBy = "paradas")
+	 @ManyToMany(mappedBy = "parada") 
 	    private List<Peregrino> peregrinosAlojados= new ArrayList<>(); 
 	    @OneToMany(mappedBy = "parada")
 	    private List<Estancia> estancias= new ArrayList<>(); 
+	    
 
 	    
 	    public Parada(long id, String nombre, char region, String responsable) {

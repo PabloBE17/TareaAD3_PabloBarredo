@@ -16,11 +16,10 @@ public class Carnet {
     private double distancia=0.0;
 	@Column(name = "numVips")
     private int numVips=0;
-    @ManyToOne
-    @OneToOne(mappedBy = "idParada")
+	@OneToOne
+    @JoinColumn(name = "parada_inicial_id") 
     private Parada paradaInicial;
-    @OneToOne(mappedBy = "carnet")
-    private Peregrino peregrino;
+    
 
     public Carnet(long id, Parada paradaInicial) {
     	 this.id = id;

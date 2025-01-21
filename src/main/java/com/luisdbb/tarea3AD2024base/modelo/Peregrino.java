@@ -19,6 +19,12 @@ public class Peregrino {
 	private Carnet carnet;
 	@OneToMany(mappedBy = "peregrino")
     private List<Estancia> estancias= new ArrayList<>();
+	@ManyToMany
+	@JoinTable(
+	    name = "peregrinos_paradas", 
+	    joinColumns = @JoinColumn(name = "peregrino_id"), 
+	    inverseJoinColumns = @JoinColumn(name = "parada_id") 
+	)
     private List<Parada> parada= new ArrayList<>();
     
     public Peregrino() {
