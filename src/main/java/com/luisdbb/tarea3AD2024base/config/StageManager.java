@@ -19,14 +19,13 @@ import javafx.stage.Stage;
 public class StageManager {
 
     private static final Logger LOG = getLogger(StageManager.class);
-    private final Stage primaryStage;
     private final SpringFXMLLoader springFXMLLoader;
+    private final Stage primaryStage;
 
-    public StageManager(SpringFXMLLoader springFXMLLoader, Stage stage) {
+    public StageManager(SpringFXMLLoader springFXMLLoader, Stage primaryStage) {
         this.springFXMLLoader = springFXMLLoader;
-        this.primaryStage = stage;
+        this.primaryStage = primaryStage;
     }
-
     public void switchScene(final FxmlView view) {
         Parent viewRootNodeHierarchy = loadViewNodeHierarchy(view.getFxmlFile());
         show(viewRootNodeHierarchy, view.getTitle());

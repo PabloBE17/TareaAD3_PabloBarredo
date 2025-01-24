@@ -11,7 +11,7 @@ public enum FxmlView {
 
 		@Override
 		public String getFxmlFile() {
-			return "/fxml/User.fxml";
+			return "/fxml/Usuario.fxml";
 		}
 	},
 	LOGIN {
@@ -22,7 +22,18 @@ public enum FxmlView {
 
 		@Override
 		public String getFxmlFile() {
-			return "/fxml/Login.fxml";
+			return "/fxml/InicioSesion.fxml";
+		}
+	},
+	MENU_PEREGRINO {
+		@Override
+		public String getTitle() {
+			return getStringFromResourceBundle("MenuPeregrino.title");
+		}
+
+		@Override
+		public String getFxmlFile() {
+			return "/fxml/MenuPeregrino.fxml";
 		}
 	};
 
