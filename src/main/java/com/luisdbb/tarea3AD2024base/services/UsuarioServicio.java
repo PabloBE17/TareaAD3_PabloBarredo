@@ -34,7 +34,7 @@ public class UsuarioServicio {
 		return usuarioRepository.findAll();
 	}
 	public boolean authenticate(String username, String password) {
-		Usuario usuario = usuarioRepository.buscarNombrePorUsuarioyContraseña(username,password);
+		Usuario usuario = usuarioRepository.findByNombreAndPassword(username,password);
 		if (usuario == null) {
 			return false;
 		} else {
@@ -45,7 +45,7 @@ public class UsuarioServicio {
 		}
 	}
 	public Usuario autenticarObtenerUser(String nombre, String password) {
-        Usuario usuario = usuarioRepository.buscarNombrePorUsuarioyContraseña(nombre, password);
+        Usuario usuario = usuarioRepository.findByNombreAndPassword(nombre, password);
         if (usuario != null) {
             return usuario;
         }

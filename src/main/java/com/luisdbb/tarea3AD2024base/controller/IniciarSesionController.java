@@ -47,23 +47,29 @@ public class IniciarSesionController implements Initializable {
 
     @FXML
     private void login(ActionEvent event) {
-        String inputUsername = username.getText();
-        String inputPassword = password.getText();
+        String Username = username.getText();
+        String Password = password.getText();
 
-        if (inputUsername.isEmpty() || inputPassword.isEmpty()) {
+        if (Username.isEmpty() || Password.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
             return;
         }
 
-        Usuario usuario = usuarioServicio.autenticarObtenerUser(inputUsername, inputPassword);
+        Usuario usuario = usuarioServicio.autenticarObtenerUser(Username, Password);
 
         if (usuario != null) {
             if (usuario.getRol() == Rol.PEREGRINO) {
                 showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, peregrino " + usuario.getNombre() + "!");
-                stageManager.switchScene(FxmlView.LOGIN); 
+                stageManager.switchScene(FxmlView.AÑADIR_PEREGRINO); 
                 
                 
-            } else {
+            } 
+            else if(usuario.getRol() == Rol.ADMINISTRADOR) {
+            	showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, administrador " + usuario.getNombre() + "!");
+                stageManager.switchScene(FxmlView.AÑADIR_PARADA); 
+            	
+            }
+            	else {
                 showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, " + usuario.getNombre() + "!");
                 
             }
@@ -78,6 +84,11 @@ public class IniciarSesionController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    @FXML
+    private void AñadirPere(ActionEvent event) {
+        // Cambiar a la vista de "Añadir Peregrino"
+        stageManager.switchScene(FxmlView.AÑADIR_PEREGRINO);
     }
 
     @Override

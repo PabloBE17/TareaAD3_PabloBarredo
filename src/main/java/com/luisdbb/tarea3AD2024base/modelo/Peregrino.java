@@ -8,12 +8,15 @@ import jakarta.persistence.*;
 public class Peregrino {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", updatable = false, nullable = false)
+	@Column(name = "id", updatable = true, nullable = false)
 	private long id;
-	@Column(name = "nomb  re", updatable = false, nullable = false)
+	@Column(name = "nombre", updatable = true, nullable = false)
 	private String nombre;
-	@Column(name = "nacionalidad", updatable = false, nullable = false)
+	@Column(name = "nacionalidad", updatable = true, nullable = false)
 	private String nacionalidad;
+	@Column(name ="email",updatable  =true, nullable=false)
+	private String email;
+
 	@OneToOne
     @JoinColumn(name = "id_carnet")
 	private Carnet carnet;
@@ -30,10 +33,11 @@ public class Peregrino {
     public Peregrino() {
 		super();
 	}
-	public Peregrino(String nombre, long id, String nacionalidad) {
+	public Peregrino(String nombre, long id, String nacionalidad, String email) {
 		this.nombre = nombre;
 		this.id = id;
 		this.nacionalidad = nacionalidad;
+		this.email=email;
 		
 	}
 	
@@ -70,6 +74,12 @@ public class Peregrino {
 	}
 	public void setCarnet(Carnet carnet) {
 		this.carnet = carnet;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 	public List<Parada> getParada() {

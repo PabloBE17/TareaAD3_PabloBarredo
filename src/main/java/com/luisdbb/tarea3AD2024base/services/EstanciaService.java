@@ -1,5 +1,5 @@
 package com.luisdbb.tarea3AD2024base.services;
 
-public class EstanciaRepository {
+public class EstanciaService {
 
 }

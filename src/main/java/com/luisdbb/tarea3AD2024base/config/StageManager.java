@@ -80,5 +80,6 @@ public class StageManager {
         LOG.error(errorMsg, exception, exception.getCause());
         Platform.exit();
     }
+    
 
 }

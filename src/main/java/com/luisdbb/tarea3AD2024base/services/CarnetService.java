@@ -2,6 +2,7 @@ package com.luisdbb.tarea3AD2024base.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.luisdbb.tarea3AD2024base.modelo.Carnet;
 import com.luisdbb.tarea3AD2024base.modelo.Parada;
@@ -9,7 +10,6 @@ import com.luisdbb.tarea3AD2024base.repositorios.CarnetRepository;
 
 import java.util.List;
 import java.util.Optional;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -19,6 +19,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 
 @Service
+@Transactional
 public class CarnetService {
 
     @Autowired
@@ -41,29 +42,21 @@ public class CarnetService {
     }
 
     public Carnet find(Long id) {
-        Optional<Carnet> carnet = carnetRepository.findById(id);
-        return carnet.orElse(null);
+        return carnetRepository.findById(id).orElse(null);
     }
 
     public List<Carnet> findAll() {
         return carnetRepository.findAll();
     }
 
-    public List<Carnet> buscarPorUsuarioId(Long userId) {
-        return carnetRepository.findByUserId(userId);
-    }
-
-    
-
     public boolean existsById(Long id) {
         return carnetRepository.existsById(id);
     }
 
-    public boolean authenticate(String username, String password) {
-       
-        return false;
-    }
     public void exportarCarnetAXML(Carnet carnet, List<Parada> paradasAsociadas, String outputPath) {
+        if (paradasAsociadas == null || paradasAsociadas.isEmpty()) {
+            throw new IllegalArgumentException("La lista de paradas asociadas está vacía o es nula.");
+        }
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

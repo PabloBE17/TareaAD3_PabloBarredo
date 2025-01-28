@@ -1,6 +1,6 @@
 package com.luisdbb.tarea3AD2024base.controller;
 
-import java.awt.event.ActionEvent;
+import javafx.event.ActionEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -44,7 +44,7 @@ public class MenuPeregrinoController implements Initializable {
 
 	    @Autowired
 	    private Stage primaryStage;
-
+	    
 	    private Sesion sesionActual;
 	
 	
@@ -55,17 +55,7 @@ public class MenuPeregrinoController implements Initializable {
 
 	            Carnet carnet = carnetService.find(idPeregrino);
 
-	            if (carnet != null) {
-	                List<Parada> paradasAsociadas = paradaService.bsucarParadasPorParadaInicial(carnet.getParadaInicial().getId());
-
-	                String path = "src/main/resources/carnet_" + carnet.getId() + ".xml";
-	                carnetService.exportarCarnetAXML(carnet, paradasAsociadas, path);
-
-	                showAlert(Alert.AlertType.INFORMATION, "Exportación Exitosa", "El carnet se exportó exitosamente a XML.");
-	            } else {
-	                showAlert(Alert.AlertType.WARNING, "Carnet no encontrado", "No se encontró un carnet");
-	            }
-	        } catch (Exception e) {
+	            	        } catch (Exception e) {
 	            e.printStackTrace();
 	            showAlert(Alert.AlertType.ERROR, "Error", "Ocurrió un error al exportar el carnet.");
 	        }

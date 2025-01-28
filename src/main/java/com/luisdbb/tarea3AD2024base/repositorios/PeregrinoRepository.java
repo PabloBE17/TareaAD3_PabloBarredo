@@ -8,12 +8,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PeregrinoRepository extends JpaRepository<Peregrino, Long> {
     // Buscar ID por nombre del peregrino
-    @Query("SELECT p.id FROM Peregrino p WHERE p.nombre = :nombre")
-    Long buscarIdPorNombre(String nombre);
-
+	Long findIdByNombre(String nombre);
     // Buscar peregrino por ID
-    @Query("SELECT p FROM Peregrino p WHERE p.id = :id")
-    Peregrino buscarPeregrinoPorId(Long id);
+	 Peregrino getById(Long id);
+	
 
     
 }

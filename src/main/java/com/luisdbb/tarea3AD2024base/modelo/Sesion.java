@@ -1,6 +1,7 @@
 package com.luisdbb.tarea3AD2024base.modelo;
-
+import com.luisdbb.tarea3AD2024base.modelo.Perfil;
 public class Sesion {
+	private static Sesion sesion;
 	Perfil perfil;
 	String nombre;
 	private long id;
@@ -32,6 +33,12 @@ public class Sesion {
 	}
 	public void setId(long id) {
 		this.id = id;
+	}
+	public static Sesion getSesion() {
+		if(sesion ==null) {
+			sesion=new Sesion();
+		}
+		return sesion;
 	}
 	
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -45,7 +46,7 @@
                         <Image url="@../../../../../transparent_background_image.png" />
                      </image>
                   </ImageView>
-                  <TextField fx:id="username" promptText="Usuario" prefHeight="25.0" prefWidth="205.0" />
+                  <TextField fx:id="username" prefHeight="25.0" prefWidth="205.0" promptText="Usuario" />
                </children>
             </HBox>
             <HBox alignment="CENTER" spacing="10.0">
@@ -55,10 +56,26 @@
                         <Image url="@../../../../../descarga_no_bg.png" />
                      </image>
                   </ImageView>
-                  <PasswordField fx:id="password" promptText="Contraseña" prefHeight="25.0" prefWidth="205.0" />
+                  <PasswordField fx:id="password" prefHeight="25.0" prefWidth="205.0" promptText="Contraseña" />
                </children>
             </HBox>
-            <Button fx:id="loginButton" onAction="#login" prefWidth="150.0" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Iniciar Sesión" />
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Button fx:id="loginButton" onAction="#login" prefWidth="150.0" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Iniciar Sesión">
+                  <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </Button>
+                  <Button fx:id="regButton" onAction="#AñadirPere" prefWidth="150.0" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Registrarse">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets left="60.0" />
+               </VBox.margin>
+            </HBox>
          </children>
       </VBox>
    </children>
