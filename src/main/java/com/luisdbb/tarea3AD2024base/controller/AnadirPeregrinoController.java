@@ -2,9 +2,10 @@ package com.luisdbb.tarea3AD2024base.controller;
 
 import javafx.scene.control.TextField;
 
-import java.awt.event.ActionEvent;
+import javafx.event.ActionEvent;
 import java.io.File;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -19,19 +20,32 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.luisdbb.tarea3AD2024base.config.StageManager;
+import com.luisdbb.tarea3AD2024base.modelo.Carnet;
 import com.luisdbb.tarea3AD2024base.modelo.Parada;
 import com.luisdbb.tarea3AD2024base.modelo.Peregrino;
+import com.luisdbb.tarea3AD2024base.modelo.Rol;
+import com.luisdbb.tarea3AD2024base.modelo.Usuario;
+import com.luisdbb.tarea3AD2024base.services.CarnetService;
 import com.luisdbb.tarea3AD2024base.services.ParadaService;
 import com.luisdbb.tarea3AD2024base.services.PeregrinoService;
+import com.luisdbb.tarea3AD2024base.services.UsuarioServicio;
+import com.luisdbb.tarea3AD2024base.view.FxmlView;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 @Controller
-public class AñadirPeregrinoController implements Initializable {
+public class AnadirPeregrinoController implements Initializable {
+	@Autowired
+    private StageManager stageManager;
 	 @Autowired
 	    private PeregrinoService peregrinoService;
+	 @Autowired
+	 private UsuarioServicio usuarioService;
+	 @Autowired
+	 private CarnetService carnetService;
 
 	    @Autowired
 	    private ParadaService paradaService;
@@ -59,24 +73,22 @@ public class AñadirPeregrinoController implements Initializable {
 
 	    @Override
 	    public void initialize(URL location, ResourceBundle resources) {
-	        cargarNacionalidades();
+	        
 
+	        cargarNacionalidades();
 	        cargarParadas();
 	    }
 
 	    private void cargarNacionalidades() {
 	        try {
 	            List<String> nacionalidades = obtenerNacionalidades();
-	            nacionalidadComboBox.getItems().addAll(nacionalidades);
+	            if (nacionalidades.isEmpty()) {
+	                showAlert(Alert.AlertType.WARNING, "Aviso", "No se encontraron nacionalidades en el archivo XML.");
+	            } else {
+	                nacionalidadComboBox.getItems().addAll(nacionalidades);
+	            }
 	        } catch (Exception e) {
 	            showAlert(Alert.AlertType.ERROR, "Error", "No se pudieron cargar las nacionalidades.");
-	        }
-	    }
-
-	    private void cargarParadas() {
-	        List<Parada> paradas = paradaService.findAll();
-	        for (Parada parada : paradas) {
-	            paradaInicialComboBox.getItems().add(parada.getNombre());
 	        }
 	    }
 	    @FXML
@@ -84,20 +96,21 @@ public class AñadirPeregrinoController implements Initializable {
 	        String nombre = nombreField.getText();
 	        String nacionalidad = nacionalidadComboBox.getValue();
 	        String paradaInicial = paradaInicialComboBox.getValue();
-	        String contraseña=contrasenaField.getText();
-	        String correo=emailField.getText();
+	        String contraseña = contrasenaField.getText();
+	        String correo = emailField.getText();
 
-	        if (nombre.isEmpty() || nacionalidad == null || paradaInicial == null || correo == null || contraseña == null) {
+	        if (nombre.isEmpty() || nacionalidad == null || paradaInicial == null || correo.isEmpty() || contraseña.isEmpty()) {
 	            showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
 	            return;
 	        }
 
+	        
 	        Peregrino peregrino = new Peregrino();
 	        peregrino.setNombre(nombre);
 	        peregrino.setNacionalidad(nacionalidad);
 	        peregrino.setEmail(correo);
-	        
 
+	      
 	        Parada parada = paradaService.findByNombre(paradaInicial);
 	        if (parada != null) {
 	            peregrino.getParada().add(parada);
@@ -106,9 +119,30 @@ public class AñadirPeregrinoController implements Initializable {
 	            return;
 	        }
 
-	        peregrinoService.save(peregrino);
-	        showAlert(Alert.AlertType.INFORMATION, "Éxito", "Peregrino registrado correctamente.");
+	        Usuario usuario = new Usuario();
+	        usuario.setNombre(nombre);
+	        usuario.setCorreo(correo);
+	        usuario.setPassword(contraseña);
+	        usuario.setRol(Rol.PEREGRINO); 
+	        usuario.setPeregrino(peregrino); 
 
+	        Carnet carnet = new Carnet();
+	        carnet.setFechaExpedicion(LocalDate.now()); 
+	        carnet.setDistancia(0); 
+	        carnet.setNumVips(0); 
+	        carnet.setParadaInicial(parada); 
+	        
+	        
+	        peregrinoService.save(peregrino);
+	        usuarioService.save(usuario);
+	        carnetService.save(carnet); 
+	        
+	        
+
+	        
+	        showAlert(Alert.AlertType.INFORMATION, "Éxito", "Peregrino y usuario registrados correctamente.");
+
+	        
 	        limpiarCampos();
 	    }
 	    private void limpiarCampos() {
@@ -122,6 +156,7 @@ public class AñadirPeregrinoController implements Initializable {
 	    @FXML
 	    private void cancelar(ActionEvent event) {
 	        limpiarCampos();
+	        stageManager.switchScene(FxmlView.LOGIN);
 	    }
 
 	    private void showAlert(Alert.AlertType alertType, String title, String message) {
@@ -132,36 +167,47 @@ public class AñadirPeregrinoController implements Initializable {
 	        alert.showAndWait();
 	    }
 	    
-	    public static List<String> obtenerNacionalidades() {
+	    private List<String> obtenerNacionalidades() {
 	        List<String> nacionalidades = new ArrayList<>();
-	        try {
-	            
-	            File file = new File("src/main/resources/paises.xml");
 
-	           
+	        try {
+	            File file = new File("src/main/resources/paises.xml");
 	            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	            DocumentBuilder builder = factory.newDocumentBuilder();
-	            Document doc = builder.parse(file);
-	            doc.getDocumentElement().normalize();
+	            Document document = builder.parse(file);
 
-	            
-	            NodeList nodeList = doc.getElementsByTagName("pais");
+	            document.getDocumentElement().normalize();
 
-	            
+	            NodeList nodeList = document.getElementsByTagName("pais");
+
 	            for (int i = 0; i < nodeList.getLength(); i++) {
 	                Node node = nodeList.item(i);
+
 	                if (node.getNodeType() == Node.ELEMENT_NODE) {
-	                    Element element = (Element) node;
-	                    String nombre = ((Document) element).getElementsByTagName("nombre").item(0).getTextContent();
-	                    nacionalidades.add(nombre);
+	                    org.w3c.dom.Element element = (org.w3c.dom.Element) node;
+
+	                    NodeList nombreList = element.getElementsByTagName("nombre");
+
+	                    if (nombreList.getLength() > 0) {
+	                        String nombrePais = nombreList.item(0).getTextContent().trim();
+	                        nacionalidades.add(nombrePais);
+	                    } else {
+	                        System.err.println(" Advertencia: Nodo <nombre> no encontrado en país " + (i + 1));
+	                    }
 	                }
 	            }
-
 	        } catch (Exception e) {
+	            System.err.println("Error al leer el archivo XML: " + e.getMessage());
 	            e.printStackTrace();
-	            System.out.println("Error al cargar las nacionalidades desde el archivo XML.");
 	        }
+
 	        return nacionalidades;
+	    }
+	    private void cargarParadas() {
+	        List<Parada> paradas = paradaService.findAll();
+	        for (Parada parada : paradas) {
+	            paradaInicialComboBox.getItems().add(parada.getNombre());
+	        }
 	    }
 	}
 

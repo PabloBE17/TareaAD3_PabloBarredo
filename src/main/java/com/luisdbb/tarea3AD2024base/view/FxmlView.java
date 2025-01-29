@@ -39,23 +39,23 @@ public enum FxmlView {
 	 AÑADIR_PEREGRINO {
 	        @Override
 	        public String getTitle() {
-	            return getStringFromResourceBundle("AñadirPeregrino.title");
+	            return getStringFromResourceBundle("AnadirPeregrino.title");
 	        }
 
 	        @Override
 	        public String getFxmlFile() {
-	            return "/fxml/AñadirPeregrino.fxml";
+	            return "/fxml/AnadirPeregrino.fxml";
 	        }
 	    },
 	 AÑADIR_PARADA{
 	    	 @Override
 		        public String getTitle() {
-		            return getStringFromResourceBundle("AñadirParada.title");
+		            return getStringFromResourceBundle("AnadirParada.title");
 		        }
 
 		        @Override
 		        public String getFxmlFile() {
-		            return "/fxml/AñadirParada.fxml";
+		            return "/fxml/AnadirParada.fxml";
 		        }
 	    };
 

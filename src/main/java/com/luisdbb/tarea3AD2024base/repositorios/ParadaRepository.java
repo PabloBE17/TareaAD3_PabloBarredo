@@ -10,12 +10,13 @@ import java.util.List;
 
 @Repository
 public interface ParadaRepository extends JpaRepository<Parada, Long> {
-	// Obtener todas las paradas
-	List<Parada> findAll();
-
-	// Buscar ID de parada por nombre
-	Parada findByNombre(String nombre);
-
 	
+    List<Parada> findByNombre(String nombre);
+
+   
+    Parada findFirstByNombre(String nombre);
+
+    
+    List<Parada> findByPeregrinosAlojados_Id(Long idPeregrino);
 }
     

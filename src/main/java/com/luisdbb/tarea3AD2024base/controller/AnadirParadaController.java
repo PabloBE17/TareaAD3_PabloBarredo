@@ -6,8 +6,10 @@ import java.util.ResourceBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import com.luisdbb.tarea3AD2024base.config.StageManager;
 import com.luisdbb.tarea3AD2024base.modelo.Parada;
 import com.luisdbb.tarea3AD2024base.services.ParadaService;
+import com.luisdbb.tarea3AD2024base.view.FxmlView;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +19,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 @Controller
-public class AñadirParadaController implements Initializable {
+public class AnadirParadaController implements Initializable {
+	@Autowired
+    private StageManager stageManager;
 
     @Autowired
     private ParadaService paradaService;
@@ -82,6 +86,7 @@ public class AñadirParadaController implements Initializable {
     @FXML
     private void cancelarEdicion(ActionEvent event) {
         limpiarCampos();
+        stageManager.switchScene(FxmlView.LOGIN);
     }
 
     private void limpiarCampos() {

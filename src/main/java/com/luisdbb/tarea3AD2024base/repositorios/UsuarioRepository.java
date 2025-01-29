@@ -7,11 +7,14 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    // Buscar usuario por nombre de usuario y contraseña
 	Usuario findByNombreAndPassword(String nombre, String password);
-    // Buscar el rol por nombre de usuario y contraseña
+	
     String findRolByNombreAndPassword(String nombre, String password);
     
+    Usuario findByNombre(String nombre);
+    
+    Usuario findNumeroUserPeregrinoByNombre(String nombre);
+   
     
     
 }

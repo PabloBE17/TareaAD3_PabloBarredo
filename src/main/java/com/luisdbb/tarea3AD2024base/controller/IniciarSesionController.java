@@ -1,17 +1,5 @@
 package com.luisdbb.tarea3AD2024base.controller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-
-import com.luisdbb.tarea3AD2024base.modelo.Usuario;
-import com.luisdbb.tarea3AD2024base.config.StageManager;
-import com.luisdbb.tarea3AD2024base.modelo.Rol;
-import com.luisdbb.tarea3AD2024base.services.UsuarioServicio;
-import com.luisdbb.tarea3AD2024base.view.FxmlView;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +8,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import com.luisdbb.tarea3AD2024base.config.StageManager;
+import com.luisdbb.tarea3AD2024base.modelo.Usuario;
+import com.luisdbb.tarea3AD2024base.modelo.Rol;
+import com.luisdbb.tarea3AD2024base.modelo.Sesion;
+import com.luisdbb.tarea3AD2024base.services.UsuarioServicio;
+import com.luisdbb.tarea3AD2024base.view.FxmlView;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 @Controller
 public class IniciarSesionController implements Initializable {
@@ -56,22 +55,19 @@ public class IniciarSesionController implements Initializable {
         }
 
         Usuario usuario = usuarioServicio.autenticarObtenerUser(Username, Password);
+        Sesion sesion = Sesion.getSesion();
 
         if (usuario != null) {
             if (usuario.getRol() == Rol.PEREGRINO) {
                 showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, peregrino " + usuario.getNombre() + "!");
-                stageManager.switchScene(FxmlView.AÑADIR_PEREGRINO); 
-                
-                
-            } 
-            else if(usuario.getRol() == Rol.ADMINISTRADOR) {
-            	showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, administrador " + usuario.getNombre() + "!");
+                long idPeregrino = usuarioServicio.obtenerIdPeregrino(Username);
+                sesion.iniciarSesion(usuario.getRol(), usuario.getNombre(), idPeregrino);
+                stageManager.switchScene(FxmlView.MENU_PEREGRINO); 
+            } else if (usuario.getRol() == Rol.ADMINISTRADOR) {
+                showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, administrador " + usuario.getNombre() + "!");
                 stageManager.switchScene(FxmlView.AÑADIR_PARADA); 
-            	
-            }
-            	else {
+            } else {
                 showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, " + usuario.getNombre() + "!");
-                
             }
         } else {
             showAlert(Alert.AlertType.ERROR, "Inicio de Sesión Fallido", "Nombre de usuario o contraseña incorrectos.");
@@ -85,9 +81,9 @@ public class IniciarSesionController implements Initializable {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     @FXML
     private void AñadirPere(ActionEvent event) {
-        // Cambiar a la vista de "Añadir Peregrino"
         stageManager.switchScene(FxmlView.AÑADIR_PEREGRINO);
     }
 

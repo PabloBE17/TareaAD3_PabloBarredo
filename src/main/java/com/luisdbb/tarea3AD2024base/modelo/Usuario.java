@@ -7,27 +7,25 @@ public class Usuario {
 
 
 	    @Id
-	    @Column(nullable = false, unique = true) // La clave primaria no debe repetirse
+	    @Column(nullable = false, unique = true) 
 	    private String nombre;
 
 	    @Column(nullable = false)
 	    private String password;
 
-	    @Column(nullable = false, unique = true) // Correo debe ser único
+	    @Column(nullable = false, unique = true) 
 	    private String correo;
 
 	    @Enumerated(EnumType.STRING)
 	    private Rol rol;
 
 	    @ManyToOne
-	    @JoinColumn(name = "numero_user_peregrino") // Clave foránea hacia Peregrino
+	    @JoinColumn(name = "numero_user_peregrino") 
 	    private Peregrino peregrino;
 
 	    @ManyToOne
-	    @JoinColumn(name = "numero_user_parada") // Clave foránea hacia Parada
+	    @JoinColumn(name = "numero_user_parada") 
 	    private Parada parada;
-
-	    // Getters y Setters
 	    public String getNombre() {
 	        return nombre;
 	    }
@@ -75,7 +73,7 @@ public class Usuario {
 	    public void setParada(Parada parada) {
 	        this.parada = parada;
 	    }
-
+	    
 	    @Override
 	    public String toString() {
 	        return "Usuario [nombre=" + nombre + ", password=" + password + ", correo=" + correo
