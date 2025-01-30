@@ -44,14 +44,12 @@ public class ParadaService {
         return paradaRepository.findAll();
     }
 
-    public Long buscarIdPorNombre(String nombre) {
-        Parada parada = paradaRepository.findByNombre(nombre);
-        return parada != null ? parada.getId() : null;
+    public Parada findByNombre(String nombre) {
+        List<Parada> paradas = paradaRepository.findByNombre(nombre);
+        return paradas.isEmpty() ? null : paradas.get(0);
     }
 
-    public Parada findByNombre(String nombre) {
-        return paradaRepository.findFirstByNombre(nombre);
-    }
+    
 
     public boolean existsById(Long id) {
         return paradaRepository.existsById(id);
@@ -60,10 +58,7 @@ public class ParadaService {
     public long count() {
         return paradaRepository.count();
     }
-    public Parada findByPeregrinoId(Long idPeregrino) {
-        List<Parada> paradas = paradaRepository.findByPeregrinosAlojados_Id(idPeregrino);
-        
-        
-        return paradas.isEmpty() ? null : paradas.get(0);
+    public List<Parada> findByPeregrinoId(Long idPeregrino) {
+        return paradaRepository.findByPeregrinosAlojados_Id(idPeregrino);
     }
 }

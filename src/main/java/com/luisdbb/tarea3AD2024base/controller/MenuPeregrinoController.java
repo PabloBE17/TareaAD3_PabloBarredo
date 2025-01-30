@@ -70,12 +70,9 @@ public class MenuPeregrinoController implements Initializable {
                 return;
             }
 
-            Parada parada = paradaService.findByPeregrinoId(idPeregrino);
-            List<Parada> paradasAsociadas = Optional.ofNullable(parada)
-                                                    .map(List::of)
-                                                    .orElseGet(Collections::emptyList);
-            if (parada != null) {
-                paradasAsociadas.add(parada);
+            List<Parada> paradasAsociadas = paradaService.findByPeregrinoId(idPeregrino);
+            if (paradasAsociadas == null || paradasAsociadas.isEmpty()) {
+                paradasAsociadas = Collections.emptyList();
             }
 
             FileChooser fileChooser = new FileChooser();
