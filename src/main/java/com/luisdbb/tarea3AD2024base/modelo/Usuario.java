@@ -13,7 +13,7 @@ public class Usuario {
 	    @Column(nullable = false)
 	    private String password;
 
-	    @Column(nullable = false, unique = true) 
+	    @Column(nullable = true, unique = true) 
 	    private String correo;
 
 	    @Enumerated(EnumType.STRING)

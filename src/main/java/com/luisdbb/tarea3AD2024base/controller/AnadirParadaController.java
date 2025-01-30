@@ -8,7 +8,10 @@ import org.springframework.stereotype.Controller;
 
 import com.luisdbb.tarea3AD2024base.config.StageManager;
 import com.luisdbb.tarea3AD2024base.modelo.Parada;
+import com.luisdbb.tarea3AD2024base.modelo.Rol;
+import com.luisdbb.tarea3AD2024base.modelo.Usuario;
 import com.luisdbb.tarea3AD2024base.services.ParadaService;
+import com.luisdbb.tarea3AD2024base.services.UsuarioServicio;
 import com.luisdbb.tarea3AD2024base.view.FxmlView;
 
 import javafx.event.ActionEvent;
@@ -25,6 +28,9 @@ public class AnadirParadaController implements Initializable {
 
     @Autowired
     private ParadaService paradaService;
+    @Autowired
+    private UsuarioServicio usuarioService;
+
 
     @FXML
     private TextField nombreParadaField;
@@ -77,8 +83,16 @@ public class AnadirParadaController implements Initializable {
         
         paradaService.save(parada);
 
-        showAlert(Alert.AlertType.INFORMATION, "Éxito", "Parada añadida correctamente.");
+        Usuario usuario = new Usuario();
+        usuario.setNombre(responsable);
+        usuario.setPassword(contrasena); 
+        usuario.setRol(Rol.PARADA);
+        usuario.setParada(parada); 
 
+        
+        usuarioService.save(usuario);
+
+        showAlert(Alert.AlertType.INFORMATION, "Éxito", "Parada y usuario creados correctamente.");
         
         limpiarCampos();
     }

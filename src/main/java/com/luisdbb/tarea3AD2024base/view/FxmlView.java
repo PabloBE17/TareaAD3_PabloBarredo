@@ -47,6 +47,40 @@ public enum FxmlView {
 	            return "/fxml/AnadirPeregrino.fxml";
 	        }
 	    },
+	 MENU_PARADA{
+	        @Override
+	        public String getTitle() {
+	            return getStringFromResourceBundle("MenuParada.title");
+	        }
+
+	        @Override
+	        public String getFxmlFile() {
+	            return "/fxml/MenuParada.fxml";
+	        }
+	    },
+	 PANTALLA_PARADA{
+	    	@Override
+	        public String getTitle() {
+	            return getStringFromResourceBundle("PantallaParada.title");
+	        }
+
+	        @Override
+	        public String getFxmlFile() {
+	            return "/fxml/PantallaParada.fxml";
+	        }
+	    	
+	    },
+	 SELLAR_ALOJAR{
+	    	@Override
+	        public String getTitle() {
+	            return getStringFromResourceBundle("SellarAlojar.title");
+	        }
+
+	        @Override
+	        public String getFxmlFile() {
+	            return "/fxml/SellarAlojar.fxml";
+	        }
+	    },
 	 AÑADIR_PARADA{
 	    	 @Override
 		        public String getTitle() {
@@ -58,6 +92,7 @@ public enum FxmlView {
 		            return "/fxml/AnadirParada.fxml";
 		        }
 	    };
+	
 
 	public abstract String getTitle();
 

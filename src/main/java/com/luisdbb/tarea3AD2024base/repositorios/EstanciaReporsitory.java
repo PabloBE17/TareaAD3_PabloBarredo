@@ -10,6 +10,12 @@ import java.util.List;
 
 @Repository
 public interface EstanciaReporsitory extends JpaRepository<Estancia, Long> {
-    // Obtener estancias por ID de parada y rango de fechas
-	List<Estancia> findByParadaIdAndFechaBetween(Long paradaId, LocalDate fechaInicio, LocalDate fechaFin);
+    
+    List<Estancia> findByFechaBetween(LocalDate fechaInicio, LocalDate fechaFin);
+
+    List<Estancia> findByParadaId(Long paradaId);
+
+    List<Estancia> findByPeregrinoId(Long peregrinoId);
+    
+    List<Estancia> findByParadaIdAndFechaBetween(Long paradaId, LocalDate fechaInicio, LocalDate fechaFin);
 	}

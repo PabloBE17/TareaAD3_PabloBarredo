@@ -22,12 +22,12 @@ public class Carnet {
     
 
     public Carnet(long id, Parada paradaInicial) {
-    	 this.id = id;
+    	 
          this.fechaExpedicion = LocalDate.now();
          this.paradaInicial = paradaInicial;
     }
     public Carnet(long id, LocalDate fechaExpedicion, double distancia, int numVips, Parada paradaInicial) {
-        this.id = id;
+        
         this.fechaExpedicion = fechaExpedicion;
         this.distancia = distancia;
         this.numVips = numVips;

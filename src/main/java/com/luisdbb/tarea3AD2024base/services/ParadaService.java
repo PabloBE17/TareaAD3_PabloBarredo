@@ -61,4 +61,8 @@ public class ParadaService {
     public List<Parada> findByPeregrinoId(Long idPeregrino) {
         return paradaRepository.findByPeregrinosAlojados_Id(idPeregrino);
     }
+    public Parada findParadaById(Long id) {
+        return paradaRepository.findById(id).orElse(null);
+    }
+    
 }

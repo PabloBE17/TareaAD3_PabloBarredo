@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.luisdbb.tarea3AD2024base.modelo.Parada;
 import com.luisdbb.tarea3AD2024base.modelo.Peregrino;
 import com.luisdbb.tarea3AD2024base.modelo.Sesion;
 import com.luisdbb.tarea3AD2024base.modelo.User;
@@ -61,7 +62,21 @@ public class UsuarioServicio {
 	    return peregrino.getId();
 	}
 	
-	
+	public Long obtenerIdParadaPorNombreUsuario(String nombreUsuario) {
+	    Usuario usuario = usuarioRepository.findNumeroUserParadaByNombre(nombreUsuario);
+
+	    if (usuario == null) {
+	        return null;
+	    }
+
+	    Parada parada = usuario.getParada();
+
+	    if (parada == null) {
+	        return null;
+	    }
+
+	    return parada.getId();
+	}
 
 
 }

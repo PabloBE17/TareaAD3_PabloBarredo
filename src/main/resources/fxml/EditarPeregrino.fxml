@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="gridPane" hgap="12" style="-fx-background-color: #003da8;" vgap="12" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AñadirContactoController">
+<GridPane fx:id="gridPane" hgap="12" style="-fx-background-color: #003da8;" vgap="12" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <columnConstraints>
         <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" />
         <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />

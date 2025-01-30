@@ -46,23 +46,23 @@ public class MenuPeregrinoController implements Initializable {
     @Autowired
     private Stage primaryStage;
 
-    private Sesion sesionActual;
+    
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
        
-        this.sesionActual = Sesion.getSesion();
+      
     }
 
     @FXML
     private void exportarCarnet(ActionEvent event) {
         try {
-            if (sesionActual == null || sesionActual.getId() == 0) {
+            if (Sesion.getSesion() == null ) {
                 showAlert(Alert.AlertType.ERROR, "Error", "No se encontró la sesión del usuario.");
                 return;
             }
 
-            Long idPeregrino = sesionActual.getId();
+            Long idPeregrino = Sesion.getSesion().getId();
             Carnet carnet = carnetService.find(idPeregrino);
 
             if (carnet == null) {

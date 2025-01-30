@@ -17,15 +17,7 @@ public class Sesion {
     public Sesion() {
         super();
     }
-    public void iniciarSesion(Rol rol, String nombre, long idPeregrino) {
-        String rolComoCadena = rol.name(); 
-
-        Perfil perfil = Perfil.valueOf(rolComoCadena);
-
-        this.perfil = perfil;
-        this.nombre = nombre;
-        this.id = idPeregrino;
-    }
+    
     public Perfil getPerfil() {
         return perfil;
     }

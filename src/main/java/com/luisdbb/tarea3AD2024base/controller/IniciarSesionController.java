@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import com.luisdbb.tarea3AD2024base.config.StageManager;
 import com.luisdbb.tarea3AD2024base.modelo.Usuario;
+import com.luisdbb.tarea3AD2024base.modelo.Perfil;
 import com.luisdbb.tarea3AD2024base.modelo.Rol;
 import com.luisdbb.tarea3AD2024base.modelo.Sesion;
 import com.luisdbb.tarea3AD2024base.services.UsuarioServicio;
@@ -55,19 +56,27 @@ public class IniciarSesionController implements Initializable {
         }
 
         Usuario usuario = usuarioServicio.autenticarObtenerUser(Username, Password);
-        Sesion sesion = Sesion.getSesion();
+        
 
         if (usuario != null) {
             if (usuario.getRol() == Rol.PEREGRINO) {
                 showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, peregrino " + usuario.getNombre() + "!");
                 long idPeregrino = usuarioServicio.obtenerIdPeregrino(Username);
-                sesion.iniciarSesion(usuario.getRol(), usuario.getNombre(), idPeregrino);
+                Sesion.getSesion().setId(idPeregrino);
+                Sesion.getSesion().setNombre(Username);
+                Sesion.getSesion().setPerfil(Perfil.PEREGRINO);
+                
                 stageManager.switchScene(FxmlView.MENU_PEREGRINO); 
             } else if (usuario.getRol() == Rol.ADMINISTRADOR) {
                 showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, administrador " + usuario.getNombre() + "!");
                 stageManager.switchScene(FxmlView.AÑADIR_PARADA); 
             } else {
-                showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, " + usuario.getNombre() + "!");
+                showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, administrador de parada " + usuario.getNombre() + "!");
+                stageManager.switchScene(FxmlView.MENU_PARADA);
+                long idParada = usuarioServicio.obtenerIdParadaPorNombreUsuario(Username);
+                Sesion.getSesion().setId(idParada);
+                Sesion.getSesion().setNombre(Username);
+                Sesion.getSesion().setPerfil(Perfil.PARADA);
             }
         } else {
             showAlert(Alert.AlertType.ERROR, "Inicio de Sesión Fallido", "Nombre de usuario o contraseña incorrectos.");
