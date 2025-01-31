@@ -21,6 +21,8 @@
         <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
         <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
         <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
+        <RowConstraints minHeight="30.0" vgrow="ALWAYS" /> 
+        <RowConstraints />
         <RowConstraints />
       <RowConstraints />
       <RowConstraints />
@@ -63,7 +65,16 @@
          <Insets left="10.0" />
       </GridPane.margin></Label>
     
-    
+    <Label style="-fx-text-fill: yellow;" text="Correo del responsable" GridPane.columnIndex="0" GridPane.rowIndex="5">
+        <GridPane.margin>
+            <Insets left="10.0" />
+        </GridPane.margin>
+    </Label>
+    <TextField fx:id="correoResponsableField" style="-fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="5">
+        <GridPane.margin>
+            <Insets right="10.0" />
+        </GridPane.margin>
+    </TextField>
 
     
     <HBox alignment="CENTER" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="10">

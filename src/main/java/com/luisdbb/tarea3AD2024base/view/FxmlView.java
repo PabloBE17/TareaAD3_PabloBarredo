@@ -81,6 +81,17 @@ public enum FxmlView {
 	            return "/fxml/SellarAlojar.fxml";
 	        }
 	    },
+	 MENU_ADMIN{
+	    	 @Override
+		        public String getTitle() {
+		            return getStringFromResourceBundle("MenuAdmin.title");
+		        }
+
+		        @Override
+		        public String getFxmlFile() {
+		            return "/fxml/MenuAdmin.fxml";
+		        }
+	    },
 	 AÑADIR_PARADA{
 	    	 @Override
 		        public String getTitle() {

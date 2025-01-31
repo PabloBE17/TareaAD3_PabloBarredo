@@ -52,5 +52,8 @@ public class EstanciaService {
         
         return estanciaRepository.save(estancia);
     }
+    public List<Estancia> findByPeregrinoId(Long idPeregrino) {
+        return estanciaRepository.findByPeregrinoId(idPeregrino);
+    }
 }
 

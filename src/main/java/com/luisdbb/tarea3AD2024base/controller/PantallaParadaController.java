@@ -97,6 +97,10 @@ public class PantallaParadaController implements Initializable{
             mostrarAlerta("Error", "Debes seleccionar ambas fechas.");
             return;
         }
+        if (!validarRangoFechas(inicio, fin)) {
+            mostrarAlerta("Error", "La fecha de inicio no puede ser posterior a la fecha de fin.");
+            return;
+        }
 
         List<Estancia> estancias = estanciaService.findByParadaIdAndFechaBetween(idParada, inicio, fin);
 
@@ -139,5 +143,11 @@ public class PantallaParadaController implements Initializable{
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+    public static boolean validarRangoFechas(LocalDate fechaInicio, LocalDate fechaFin) {
+        if (fechaInicio == null || fechaFin == null) {
+            return false;
+        }
+        return !fechaInicio.isAfter(fechaFin);
     }
 }

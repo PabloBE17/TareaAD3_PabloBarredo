@@ -4,6 +4,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert.AlertType;
 
@@ -51,7 +53,7 @@ public class SellarAlojarController implements Initializable {
     private Label responsableLabel;
 
     @FXML
-    private TextField idPeregrinoField;
+    private ComboBox<String> peregrinoComboBox;
 
     @FXML
     private TextField kmRecorridosField;
@@ -70,6 +72,14 @@ public class SellarAlojarController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         cargarDatosParada();
+        cargarPeregrinos();
+        estanciaCheckBox.setOnAction(event -> manejarCheckboxVip());
+        vipCheckBox.setOnAction(event -> manejarCheckboxVip());
+        kmRecorridosField.textProperty().addListener((observable, viejoValor, nuevoValue) -> {
+            if (!nuevoValue.matches("\\d{0,4}")) { 
+                kmRecorridosField.setText(viejoValor); 
+            }
+        });
     }
 
     private void cargarDatosParada() {
@@ -92,13 +102,14 @@ public class SellarAlojarController implements Initializable {
 
     @FXML
     private void sellarAlojar(ActionEvent event) {
-    	try {
-            if (idPeregrinoField.getText().isEmpty() || kmRecorridosField.getText().isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Por favor, completa todos los campos.");
+        try {
+            if (peregrinoComboBox.getValue() == null || kmRecorridosField.getText().isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Por favor, selecciona un peregrino y completa los kilómetros recorridos.");
                 return;
             }
 
-            Long idCarnet = Long.parseLong(idPeregrinoField.getText());
+            String selectedPeregrino = peregrinoComboBox.getValue();
+            Long idCarnet = Long.parseLong(selectedPeregrino.split(" - ")[0]);
             Double kmRecorridos = Double.parseDouble(kmRecorridosField.getText());
             boolean vip = vipCheckBox.isSelected();
             boolean estanciado = estanciaCheckBox.isSelected();
@@ -109,49 +120,69 @@ public class SellarAlojarController implements Initializable {
                 return;
             }
 
+            Long idParada = Sesion.getSesion().getId();
+            Parada parada = paradaService.findParadaById(idParada);
+            if (parada == null) {
+                showAlert(Alert.AlertType.ERROR, "Error", "No se encontró la parada en la base de datos.");
+                return;
+            }
+
+            Peregrino peregrino = peregrinoService.find(idCarnet);
+            if (peregrino == null) {
+                showAlert(Alert.AlertType.ERROR, "Error", "No se encontró el peregrino en la base de datos.");
+                return;
+            }
+
+            if (parada.getPeregrinos().contains(peregrino)) {
+                showAlert(Alert.AlertType.WARNING, "Aviso", "El peregrino ya ha estado en esta parada y no puede volver a sellar.");
+                return;
+            }
+
             carnet.setDistancia(carnet.getDistancia() + kmRecorridos);
             if (vip) {
                 carnet.setNumVips(carnet.getNumVips() + 1);
             }
 
+            if (!peregrino.getParada().contains(parada)) {
+                peregrino.getParada().add(parada);
+            }
+            if (!parada.getPeregrinos().contains(peregrino)) {
+                parada.getPeregrinos().add(peregrino);
+            }
+
+            
+            peregrinoService.save(peregrino);
+            paradaService.save(parada);
+            carnetService.save(carnet);
+            
+            
+
+           
             if (estanciado) {
-                Long idParada = (Sesion.getSesion() != null) ? Sesion.getSesion().getId() : null;
-                if (idParada == null) {
-                    showAlert(Alert.AlertType.ERROR, "Error", "No se encontró la parada actual.");
-                    return;
-                }
-
-                Parada parada = paradaService.findParadaById(idParada);
-                if (parada == null) {
-                    showAlert(Alert.AlertType.ERROR, "Error", "No se encontró la parada en la base de datos.");
-                    return;
-                }
-
-                Peregrino peregrino = peregrinoService.find(idCarnet);
-                if (peregrino == null) {
-                    showAlert(Alert.AlertType.ERROR, "Error", "No se encontró el peregrino en la base de datos.");
-                    return;
-                }
-
                 Estancia estancia = new Estancia();
-                estancia.setFecha(java.time.LocalDate.now()); 
+                estancia.setFecha(java.time.LocalDate.now());
                 estancia.setVip(vip);
                 estancia.setParada(parada);
                 estancia.setPeregrino(peregrino);
-
                 estanciaService.saveEstancia(estancia);
             }
 
-            carnetService.save(carnet);
-
-            showAlert(Alert.AlertType.INFORMATION, "Éxito", "Carnet y estancia actualizados correctamente.");
-            showConfirmationAlert();
-
+            showAlert(Alert.AlertType.INFORMATION, "Éxito", "Carnet actualizado correctamente.");
+            
+            stageManager.switchScene(FxmlView.MENU_PARADA);
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Por favor, ingresa valores numéricos válidos.");
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error", "Ocurrió un problema al actualizar el carnet.");
+        }
+    }
+    private void manejarCheckboxVip() {
+        if (!estanciaCheckBox.isSelected()) {
+            if (vipCheckBox.isSelected()) {
+                showAlert(Alert.AlertType.WARNING, "Aviso", "Debes marcar 'Estancia' antes de seleccionar 'Es VIP'.");
+                vipCheckBox.setSelected(false);
+            }
         }
     }
 
@@ -163,15 +194,7 @@ public class SellarAlojarController implements Initializable {
         alert.showAndWait();
     }
 
-    private void showConfirmationAlert() {
-        Alert confirmAlert = new Alert(AlertType.INFORMATION);
-        confirmAlert.setTitle("Confirmación");
-        confirmAlert.setHeaderText("¡Datos guardados!");
-        confirmAlert.setContentText("El carnet ha sido actualizado correctamente.");
-        
-        confirmAlert.showAndWait();
-    }
-
+    
     private void setLabelText(String text) {
         nombreLabel.setText(text);
         regionLabel.setText(text);
@@ -180,5 +203,11 @@ public class SellarAlojarController implements Initializable {
     @FXML
     private void salir(ActionEvent event) {
         stageManager.switchScene(FxmlView.MENU_PARADA);
+    }
+    private void cargarPeregrinos() {
+        List<Peregrino> peregrinos = peregrinoService.findAll();
+        for (Peregrino peregrino : peregrinos) {
+            peregrinoComboBox.getItems().add(peregrino.getId() + " - " + peregrino.getNombre());
+        }
     }
 }

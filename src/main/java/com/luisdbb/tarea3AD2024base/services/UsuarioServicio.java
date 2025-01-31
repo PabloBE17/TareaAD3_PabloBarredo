@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.luisdbb.tarea3AD2024base.modelo.Parada;
 import com.luisdbb.tarea3AD2024base.modelo.Peregrino;
-import com.luisdbb.tarea3AD2024base.modelo.Sesion;
-import com.luisdbb.tarea3AD2024base.modelo.User;
+
+
 import com.luisdbb.tarea3AD2024base.modelo.Usuario;
 import com.luisdbb.tarea3AD2024base.repositorios.UsuarioRepository;
 
@@ -18,8 +18,8 @@ import com.luisdbb.tarea3AD2024base.repositorios.UsuarioRepository;
 public class UsuarioServicio {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
-	 private static Usuario usuarioActual; 
-	 private Sesion sesionActual = Sesion.getSesion();
+	
+	
 	public Usuario save(Usuario entity) {
 		return usuarioRepository.save(entity);
 	}
@@ -40,7 +40,7 @@ public class UsuarioServicio {
 	}
 	public Usuario autenticarObtenerUser(String nombre, String password) {
         Usuario usuario = usuarioRepository.findByNombreAndPassword(nombre, password);
-        if (usuario != null) {
+        if (usuario != null && usuario.getNombre().equals(nombre) && usuario.getPassword().equals(password)) {
             return usuario;
         }
         return null; 
@@ -77,6 +77,13 @@ public class UsuarioServicio {
 
 	    return parada.getId();
 	}
+	public boolean existePorNombre(String nombre) {
+        return usuarioRepository.existsByNombre(nombre);
+    }
+
+    public boolean existePorCorreo(String correo) {
+        return usuarioRepository.existsByCorreo(correo);
+    }
 
 
 }

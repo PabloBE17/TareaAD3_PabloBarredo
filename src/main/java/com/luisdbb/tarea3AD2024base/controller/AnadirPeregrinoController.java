@@ -1,7 +1,5 @@
 package com.luisdbb.tarea3AD2024base.controller;
 
-import javafx.scene.control.TextField;
-
 import javafx.event.ActionEvent;
 import java.io.File;
 import java.net.URL;
@@ -9,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import javax.lang.model.element.Element;
 import javax.xml.parsers.DocumentBuilder;
@@ -103,8 +102,25 @@ public class AnadirPeregrinoController implements Initializable {
 	            showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
 	            return;
 	        }
-
 	        
+	        if (usuarioService.existePorNombre(nombre)) {
+	            showAlert(Alert.AlertType.ERROR, "Error", "El nombre de usuario ya existe.");
+	            return;
+	        }
+	        if (!esCorreoValido(correo)) {
+	            showAlert(Alert.AlertType.ERROR, "Correo Inválido", "Por favor, ingresa un correo válido.");
+	            return;
+	        }
+
+	        if (usuarioService.existePorCorreo(correo)) {
+	            showAlert(Alert.AlertType.ERROR, "Error", "El correo ya está registrado.");
+	            return;
+	        }
+	        
+	        if (contieneEspacios(nombre) || contieneEspacios(contraseña)) {
+	            showAlert(Alert.AlertType.ERROR, "Error de Entrada", "El nombre de usuario y la contraseña no pueden contener espacios.");
+	            return;
+	        }
 	        Peregrino peregrino = new Peregrino();
 	        peregrino.setNombre(nombre);
 	        peregrino.setNacionalidad(nacionalidad);
@@ -112,13 +128,7 @@ public class AnadirPeregrinoController implements Initializable {
 
 	      
 	        Parada parada = paradaService.findByNombre(paradaInicial);
-	        if (parada != null) {
-	            peregrino.getParada().add(parada);
-	        } else {
-	            showAlert(Alert.AlertType.ERROR, "Error", "La parada seleccionada no existe.");
-	            return;
-	        }
-
+	       
 	        Usuario usuario = new Usuario();
 	        usuario.setNombre(nombre);
 	        usuario.setCorreo(correo);
@@ -131,11 +141,12 @@ public class AnadirPeregrinoController implements Initializable {
 	        carnet.setDistancia(0); 
 	        carnet.setNumVips(0); 
 	        carnet.setParadaInicial(parada); 
+	        peregrino.setCarnet(carnet);
 	        
-	        
+	        carnetService.save(carnet); 
 	        peregrinoService.save(peregrino);
 	        usuarioService.save(usuario);
-	        carnetService.save(carnet); 
+	        
 	        
 	        
 
@@ -144,6 +155,7 @@ public class AnadirPeregrinoController implements Initializable {
 
 	        
 	        limpiarCampos();
+	        stageManager.switchScene(FxmlView.LOGIN);
 	    }
 	    private void limpiarCampos() {
 	        nombreField.clear();
@@ -208,6 +220,13 @@ public class AnadirPeregrinoController implements Initializable {
 	        for (Parada parada : paradas) {
 	            paradaInicialComboBox.getItems().add(parada.getNombre());
 	        }
+	    }
+	    private boolean esCorreoValido(String correo) {
+	        String patronCorreo = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+	        return Pattern.matches(patronCorreo, correo);
+	    }
+	    private boolean contieneEspacios(String input) {
+	        return input.contains(" ");
 	    }
 	}
 

@@ -17,10 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import com.luisdbb.tarea3AD2024base.config.StageManager;
 import com.luisdbb.tarea3AD2024base.modelo.Carnet;
+import com.luisdbb.tarea3AD2024base.modelo.Estancia;
 import com.luisdbb.tarea3AD2024base.modelo.Parada;
+import com.luisdbb.tarea3AD2024base.modelo.Peregrino;
 import com.luisdbb.tarea3AD2024base.modelo.Sesion;
 import com.luisdbb.tarea3AD2024base.services.CarnetService;
+import com.luisdbb.tarea3AD2024base.services.EstanciaService;
 import com.luisdbb.tarea3AD2024base.services.ParadaService;
+import com.luisdbb.tarea3AD2024base.services.PeregrinoService;
 import com.luisdbb.tarea3AD2024base.view.FxmlView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -39,13 +43,18 @@ public class MenuPeregrinoController implements Initializable {
 
     @Autowired
     private CarnetService carnetService;
+    @Autowired
+    private PeregrinoService peregrinoService;
+    @Autowired
+    private EstanciaService estanciaService;
 
     @Autowired
     private ParadaService paradaService;
 
     @Autowired
     private Stage primaryStage;
-
+    
+    
     
 
     @Override
@@ -57,7 +66,7 @@ public class MenuPeregrinoController implements Initializable {
     @FXML
     private void exportarCarnet(ActionEvent event) {
         try {
-            if (Sesion.getSesion() == null ) {
+            if (Sesion.getSesion() == null) {
                 showAlert(Alert.AlertType.ERROR, "Error", "No se encontró la sesión del usuario.");
                 return;
             }
@@ -70,18 +79,18 @@ public class MenuPeregrinoController implements Initializable {
                 return;
             }
 
-            List<Parada> paradasAsociadas = paradaService.findByPeregrinoId(idPeregrino);
-            if (paradasAsociadas == null || paradasAsociadas.isEmpty()) {
-                paradasAsociadas = Collections.emptyList();
-            }
+            List<Estancia> estancias = estanciaService.findByPeregrinoId(idPeregrino);
+            
+            List<Parada> paradasVisitadas = paradaService.findByPeregrinoId(idPeregrino);
 
+            
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Guardar Carnet XML");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos XML", "*.xml"));
             File file = fileChooser.showSaveDialog(primaryStage);
 
             if (file != null) {
-                exportarCarnetAXML(carnet, paradasAsociadas, file.getAbsolutePath());
+            	exportarCarnetAXML(carnet, estancias, paradasVisitadas, file.getAbsolutePath());
                 showAlert(Alert.AlertType.INFORMATION, "Éxito", "Carnet exportado correctamente.");
             } else {
                 showAlert(Alert.AlertType.WARNING, "Aviso", "Exportación cancelada por el usuario.");
@@ -92,7 +101,7 @@ public class MenuPeregrinoController implements Initializable {
         }
     }
 
-    private void exportarCarnetAXML(Carnet carnet, List<Parada> paradasAsociadas, String outputPath) {
+    private void exportarCarnetAXML(Carnet carnet, List<Estancia> estancias, List<Parada> paradasVisitadas, String outputPath) {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -124,11 +133,40 @@ public class MenuPeregrinoController implements Initializable {
             Element fechaActualElement = doc.createElement("Fecha");
             fechaActualElement.appendChild(doc.createTextNode(LocalDate.now().toString()));
             rootElement.appendChild(fechaActualElement);
+            
+            
+            Element estanciasElement = doc.createElement("Estancias");
+            rootElement.appendChild(estanciasElement);
 
-            Element paradasElement = doc.createElement("Paradas");
+            for (Estancia estancia : estancias) {
+                Element estanciaElement = doc.createElement("Estancia");
+
+                Element idEstanciaElement = doc.createElement("ID");
+                idEstanciaElement.appendChild(doc.createTextNode(String.valueOf(estancia.getId())));
+                estanciaElement.appendChild(idEstanciaElement);
+
+                Element fechaEstanciaElement = doc.createElement("Fecha");
+                fechaEstanciaElement.appendChild(doc.createTextNode(estancia.getFecha().toString()));
+                estanciaElement.appendChild(fechaEstanciaElement);
+
+                Element vipElement = doc.createElement("VIP");
+                vipElement.appendChild(doc.createTextNode(String.valueOf(estancia.isVip())));
+                estanciaElement.appendChild(vipElement);
+
+                Element idParadaElement = doc.createElement("ID_Parada");
+                idParadaElement.appendChild(doc.createTextNode(String.valueOf(estancia.getParada().getId())));
+                estanciaElement.appendChild(idParadaElement);
+
+                Element idPeregrinoElement = doc.createElement("ID_Peregrino");
+                idPeregrinoElement.appendChild(doc.createTextNode(String.valueOf(estancia.getPeregrino().getId())));
+                estanciaElement.appendChild(idPeregrinoElement);
+
+                estanciasElement.appendChild(estanciaElement);
+            }
+            Element paradasElement = doc.createElement("ParadasVisitadas");
             rootElement.appendChild(paradasElement);
 
-            for (Parada parada : paradasAsociadas) {
+            for (Parada parada : paradasVisitadas) {
                 Element paradaElement = doc.createElement("Parada");
 
                 Element idParadaElement = doc.createElement("ID");
@@ -158,6 +196,8 @@ public class MenuPeregrinoController implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Error", "Error al generar el archivo XML.");
         }
     }
+
+
 
     @FXML
     private void salir(ActionEvent event) {

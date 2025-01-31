@@ -18,7 +18,10 @@ import com.luisdbb.tarea3AD2024base.modelo.Sesion;
 import com.luisdbb.tarea3AD2024base.services.UsuarioServicio;
 import com.luisdbb.tarea3AD2024base.view.FxmlView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 @Controller
@@ -55,6 +58,16 @@ public class IniciarSesionController implements Initializable {
             return;
         }
 
+        
+        if (validarAdministrador(Username, Password)) {
+            showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, Administrador!");
+            Sesion.getSesion().setId(0L);
+            Sesion.getSesion().setNombre(Username);
+            Sesion.getSesion().setPerfil(Perfil.ADMINISTRADOR);
+            stageManager.switchScene(FxmlView.MENU_ADMIN);
+            return;
+        }
+
         Usuario usuario = usuarioServicio.autenticarObtenerUser(Username, Password);
         
 
@@ -67,16 +80,15 @@ public class IniciarSesionController implements Initializable {
                 Sesion.getSesion().setPerfil(Perfil.PEREGRINO);
                 
                 stageManager.switchScene(FxmlView.MENU_PEREGRINO); 
-            } else if (usuario.getRol() == Rol.ADMINISTRADOR) {
-                showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, administrador " + usuario.getNombre() + "!");
-                stageManager.switchScene(FxmlView.AÑADIR_PARADA); 
+            
             } else {
                 showAlert(Alert.AlertType.INFORMATION, "Bienvenido", "Bienvenido, administrador de parada " + usuario.getNombre() + "!");
-                stageManager.switchScene(FxmlView.MENU_PARADA);
+                
                 long idParada = usuarioServicio.obtenerIdParadaPorNombreUsuario(Username);
                 Sesion.getSesion().setId(idParada);
                 Sesion.getSesion().setNombre(Username);
                 Sesion.getSesion().setPerfil(Perfil.PARADA);
+                stageManager.switchScene(FxmlView.MENU_PARADA);
             }
         } else {
             showAlert(Alert.AlertType.ERROR, "Inicio de Sesión Fallido", "Nombre de usuario o contraseña incorrectos.");
@@ -95,8 +107,25 @@ public class IniciarSesionController implements Initializable {
     private void AñadirPere(ActionEvent event) {
         stageManager.switchScene(FxmlView.AÑADIR_PEREGRINO);
     }
-
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    }
+    private boolean validarAdministrador(String usuario, String contraseña) {
+        Properties propiedades = new Properties();
+        try (InputStream input = getClass().getResourceAsStream("/Admin.properties")) {
+            if (input == null) {
+                System.err.println("No se encontró el archivo admin.properties");
+                return false;
+            }
+            propiedades.load(input);
+            String userAdmin = propiedades.getProperty("useradmin");
+            String passAdmin = propiedades.getProperty("passadmin");
+
+            return usuario.equals(userAdmin) && contraseña.equals(passAdmin);
+        } catch (IOException e) {
+            System.err.println("Error al leer admin.properties: " + e.getMessage());
+            return false;
+        }
     }
 }

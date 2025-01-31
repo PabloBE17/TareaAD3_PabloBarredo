@@ -16,9 +16,10 @@ public class Carnet {
     private double distancia=0.0;
 	@Column(name = "numVips")
     private int numVips=0;
-	@OneToOne
-    @JoinColumn(name = "parada_inicial_id") 
-    private Parada paradaInicial;
+	@ManyToOne
+	@JoinColumn(name = "parada_inicial_id") 
+	private Parada paradaInicial;
+    
     
 
     public Carnet(long id, Parada paradaInicial) {

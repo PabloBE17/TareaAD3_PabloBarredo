@@ -49,7 +49,10 @@ public class ParadaService {
         return paradas.isEmpty() ? null : paradas.get(0);
     }
 
-    
+    public boolean existeParadaPorNombre(String nombre) {
+        List<Parada> paradas = paradaRepository.findByNombre(nombre);
+        return !paradas.isEmpty(); 
+    }
 
     public boolean existsById(Long id) {
         return paradaRepository.existsById(id);

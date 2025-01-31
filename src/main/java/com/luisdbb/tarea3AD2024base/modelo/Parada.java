@@ -19,15 +19,23 @@ public class Parada implements Serializable {
 	    private char region;
 	 @Column(name = "responsable", updatable = false, nullable = false)
 	    private String responsable;
-	 @ManyToMany(mappedBy = "parada") 
+	 @ManyToMany(fetch = FetchType.EAGER)
+			 @JoinTable(
+			    name = "peregrinos_paradas",
+			    joinColumns = @JoinColumn(name = "parada_id"),
+			    inverseJoinColumns = @JoinColumn(name = "peregrino_id")
+			)
 	    private List<Peregrino> peregrinosAlojados= new ArrayList<>(); 
-	    @OneToMany(mappedBy = "parada")
+	    
+
+
+		@OneToMany(mappedBy = "parada")
 	    private List<Estancia> estancias= new ArrayList<>(); 
 	    
 
 	    
 	    public Parada(long id, String nombre, char region, String responsable) {
-	        this.id = id;
+	       
 	        this.nombre = nombre;
 	        this.region = region;
 	        this.responsable = responsable;
@@ -81,6 +89,14 @@ public class Parada implements Serializable {
 
 		public void setEstancias(List<Estancia> estancias) {
 			this.estancias = estancias;
+		}
+		public List<Peregrino> getPeregrinos() {
+			return peregrinosAlojados;
+		}
+
+
+		public void setPeregrinosAlojados(List<Peregrino> peregrinosAlojados) {
+			this.peregrinosAlojados = peregrinosAlojados;
 		}
 
 

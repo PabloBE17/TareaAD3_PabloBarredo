@@ -10,11 +10,11 @@ public class Peregrino {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", updatable = true, nullable = false)
 	private long id;
-	@Column(name = "nombre", updatable = true, nullable = false)
+	@Column(name = "nombre", updatable = true, nullable = false, unique=true)
 	private String nombre;
 	@Column(name = "nacionalidad", updatable = true, nullable = false)
 	private String nacionalidad;
-	@Column(name ="email",updatable  =true, nullable=false)
+	@Column(name ="email",updatable  =true, nullable=false, unique=true)
 	private String email;
 
 	@OneToOne
@@ -22,7 +22,7 @@ public class Peregrino {
 	private Carnet carnet;
 	@OneToMany(mappedBy = "peregrino")
     private List<Estancia> estancias= new ArrayList<>();
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER) 
 	@JoinTable(
 	    name = "peregrinos_paradas", 
 	    joinColumns = @JoinColumn(name = "peregrino_id"), 
@@ -35,7 +35,6 @@ public class Peregrino {
 	}
 	public Peregrino(String nombre, long id, String nacionalidad, String email) {
 		this.nombre = nombre;
-		this.id = id;
 		this.nacionalidad = nacionalidad;
 		this.email=email;
 		
@@ -46,7 +45,6 @@ public class Peregrino {
 	public Peregrino(String nombre, long id, String nacionalidad, Carnet carnet) {
 		super();
 		this.nombre = nombre;
-		this.id = id;
 		this.nacionalidad = nacionalidad;
 		
 	}

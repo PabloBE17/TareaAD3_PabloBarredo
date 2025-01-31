@@ -2,6 +2,7 @@ package com.luisdbb.tarea3AD2024base.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,7 +50,9 @@ public class AnadirParadaController implements Initializable {
 
     @FXML
     private Button cancelarButton;
-
+    
+    @FXML
+    private TextField correoResponsableField;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         
@@ -61,19 +64,43 @@ public class AnadirParadaController implements Initializable {
         String region = regionField.getText();
         String responsable = responsableField.getText();
         String contrasena = contrasenaField.getText();
-
+        String correoResponsable = correoResponsableField.getText();
         
         if (nombreParada.isEmpty() || region.isEmpty() || responsable.isEmpty() || contrasena.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos obligatorios.");
+            showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
             return;
         }
-
+        if (!esCorreoValido(correoResponsable)) {
+            showAlert(Alert.AlertType.ERROR, "Correo Inválido", "Por favor, ingresa un correo válido.");
+            return;
+        }
+        if (!esRegionValida(region)) {
+            showAlert(Alert.AlertType.WARNING, "Error de Región", "La región debe ser una única letra .");
+            return;
+        }
         
         if (region.length() != 1) {
             showAlert(Alert.AlertType.WARNING, "Error de Región", "La región debe ser un único carácter.");
             return;
         }
+        if (contieneEspacios(responsable) || contieneEspacios(contrasena)) {
+            showAlert(Alert.AlertType.ERROR, "Error de Entrada", "El nombre de usuario y la contraseña no pueden contener espacios.");
+            return;
+        }
+        
+        if (paradaService.existeParadaPorNombre(nombreParada)) {
+            showAlert(Alert.AlertType.ERROR, "Parada Duplicada", "Ya existe una parada con este nombre.");
+            return;
+        }
+        if (usuarioService.existePorNombre(responsable)) {
+            showAlert(Alert.AlertType.ERROR, "Usuario Duplicado", "El nombre del responsable ya está registrado.");
+            return;
+        }
 
+        if (usuarioService.existePorCorreo(correoResponsable)) {
+            showAlert(Alert.AlertType.ERROR, "Correo Duplicado", "El correo ingresado ya está en uso.");
+            return;
+        }
         
         Parada parada = new Parada();
         parada.setNombre(nombreParada);
@@ -85,6 +112,7 @@ public class AnadirParadaController implements Initializable {
 
         Usuario usuario = new Usuario();
         usuario.setNombre(responsable);
+        usuario.setCorreo(correoResponsable);
         usuario.setPassword(contrasena); 
         usuario.setRol(Rol.PARADA);
         usuario.setParada(parada); 
@@ -95,12 +123,13 @@ public class AnadirParadaController implements Initializable {
         showAlert(Alert.AlertType.INFORMATION, "Éxito", "Parada y usuario creados correctamente.");
         
         limpiarCampos();
+        stageManager.switchScene(FxmlView.MENU_ADMIN);
     }
 
     @FXML
     private void cancelarEdicion(ActionEvent event) {
         limpiarCampos();
-        stageManager.switchScene(FxmlView.LOGIN);
+        stageManager.switchScene(FxmlView.MENU_ADMIN);
     }
 
     private void limpiarCampos() {
@@ -108,6 +137,14 @@ public class AnadirParadaController implements Initializable {
         regionField.clear();
         responsableField.clear();
         contrasenaField.clear();
+        correoResponsableField.clear();
+    }
+    private boolean esRegionValida(String region) {
+        return region.matches("^[A-Za-z]$"); 
+    }
+    private boolean esCorreoValido(String correo) {
+        String patronCorreo = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        return Pattern.matches(patronCorreo, correo);
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
@@ -116,5 +153,8 @@ public class AnadirParadaController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    private boolean contieneEspacios(String input) {
+        return input.contains(" ");
     }
 }
