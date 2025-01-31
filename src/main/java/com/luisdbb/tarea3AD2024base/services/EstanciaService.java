@@ -1,14 +1,16 @@
 package com.luisdbb.tarea3AD2024base.services;
 
 import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.luisdbb.tarea3AD2024base.modelo.Estancia;
 import com.luisdbb.tarea3AD2024base.repositorios.EstanciaReporsitory;
-
+@Service
 public class EstanciaService {
 
 
@@ -35,8 +37,8 @@ public class EstanciaService {
         return estanciaRepository.findByPeregrinoId(peregrinoId);
     }
 
-    public List<Estancia> obtenerPorParadaYFechas(Long paradaId, LocalDate fechaInicio, LocalDate fechaFin) {
-        return estanciaRepository.findByParadaIdAndFechaBetween(paradaId, fechaInicio, fechaFin);
+    public List<Estancia> findByParadaIdAndFechaBetween(Long idParada, LocalDate inicio, LocalDate fin) {
+        return estanciaRepository.findByParadaIdAndFechaBetween(idParada, inicio, fin);
     }
 
     public Estancia guardarEstancia(Estancia estancia) {
@@ -45,6 +47,10 @@ public class EstanciaService {
 
     public void eliminarEstancia(Long id) {
         estanciaRepository.deleteById(id);
+    }
+    public Estancia saveEstancia(Estancia estancia) {
+        
+        return estanciaRepository.save(estancia);
     }
 }
 

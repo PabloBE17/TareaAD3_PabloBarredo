@@ -34,6 +34,11 @@ public class MenuParadaController implements Initializable {
     private void Sellar(ActionEvent event) {
         stageManager.switchScene(FxmlView.SELLAR_ALOJAR);
     }
+	@FXML
+    private void Salir(ActionEvent event) {
+        stageManager.switchScene(FxmlView.LOGIN);
+    }
+	
 	 private void showAlert(Alert.AlertType alertType, String title, String message) {
 	        Alert alert = new Alert(alertType);
 	        alert.setTitle(title);

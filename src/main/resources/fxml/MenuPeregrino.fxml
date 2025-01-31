@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" prefHeight="216.0" prefWidth="268.0" spacing="10" style="-fx-background-color: #003da8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" >
+<VBox alignment="CENTER" fx:controller="com.luisdbb.tarea3AD2024base.controller.MenuPeregrinoController" prefHeight="216.0" prefWidth="268.0" spacing="10" style="-fx-background-color: #003da8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" >
    <children>
       <Label alignment="CENTER" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: yellow;" text="Menu Peregrino">
          <VBox.margin>
