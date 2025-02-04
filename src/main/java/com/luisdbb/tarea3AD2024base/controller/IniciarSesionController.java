@@ -40,18 +40,30 @@ public class IniciarSesionController implements Initializable {
     private PasswordField password;
 
     @FXML
+    private TextField visiblePassword;
+
+    @FXML
+    private ImageView togglePassword;
+    @FXML
     private Button loginButton;
 
     @FXML
     private ImageView userIcon;
-
     @FXML
-    private ImageView passwordIcon;
+    
+    
+    private boolean PasswordVisible = false;
 
     @FXML
     private void login(ActionEvent event) {
         String Username = username.getText();
-        String Password = password.getText();
+        String Password;
+        
+        if (PasswordVisible) {
+            Password = visiblePassword.getText();
+        } else {
+            Password = password.getText();
+        }
 
         if (Username.isEmpty() || Password.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
@@ -108,8 +120,27 @@ public class IniciarSesionController implements Initializable {
         stageManager.switchScene(FxmlView.AÑADIR_PEREGRINO);
     }
     
+    @FXML
+    private void togglePasswordVisibility() {
+        PasswordVisible = !PasswordVisible;
+        if (PasswordVisible) {
+            visiblePassword.setText(password.getText());
+            visiblePassword.setVisible(true);
+            visiblePassword.setManaged(true);
+            password.setVisible(false);
+            password.setManaged(false);
+        } else {
+            password.setText(visiblePassword.getText());
+            password.setVisible(true);
+            password.setManaged(true);
+            visiblePassword.setVisible(false);
+            visiblePassword.setManaged(false);
+        }
+    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    	 visiblePassword.setManaged(false);
+         visiblePassword.setVisible(false);
     }
     private boolean validarAdministrador(String usuario, String contraseña) {
         Properties propiedades = new Properties();
