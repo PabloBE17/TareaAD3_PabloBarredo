@@ -1,33 +1,42 @@
 package com.luisdbb.tarea3AD2024base.controller;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.event.ActionEvent;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.luisdbb.tarea3AD2024base.config.StageManager;
 import com.luisdbb.tarea3AD2024base.modelo.Carnet;
+import com.luisdbb.tarea3AD2024base.modelo.ConjuntoContratado;
 import com.luisdbb.tarea3AD2024base.modelo.Estancia;
 import com.luisdbb.tarea3AD2024base.modelo.Parada;
 import com.luisdbb.tarea3AD2024base.modelo.Peregrino;
+import com.luisdbb.tarea3AD2024base.modelo.Servicio;
 import com.luisdbb.tarea3AD2024base.modelo.Sesion;
 import com.luisdbb.tarea3AD2024base.services.CarnetService;
+import com.luisdbb.tarea3AD2024base.services.Db4oServicio;
 import com.luisdbb.tarea3AD2024base.services.EstanciaService;
 import com.luisdbb.tarea3AD2024base.services.ParadaService;
 import com.luisdbb.tarea3AD2024base.services.PeregrinoService;
 import com.luisdbb.tarea3AD2024base.view.FxmlView;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 
 @Controller
 public class SellarAlojarController implements Initializable {
@@ -42,7 +51,20 @@ public class SellarAlojarController implements Initializable {
     private PeregrinoService peregrinoService;
     @Autowired
     private EstanciaService estanciaService;
+    @Autowired
+    private Db4oServicio db4oService;
+    @FXML
+    private TableView<Servicio> serviciosTableView;
 
+    @FXML
+    private TableColumn<Servicio, String> nombreColumn;
+
+    @FXML
+    private TableColumn<Servicio, Double> precioColumn;
+    @FXML
+    private TextField modoPagoField;
+    @FXML
+    private TextField extrasField;
     @FXML
     private Label nombreLabel;
 
@@ -80,6 +102,10 @@ public class SellarAlojarController implements Initializable {
                 kmRecorridosField.setText(viejoValor); 
             }
         });
+        nombreColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNombre()));
+        precioColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getPrecio()));
+        cargarServicios();
+        serviciosTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     private void cargarDatosParada() {
@@ -113,7 +139,6 @@ public class SellarAlojarController implements Initializable {
             Double kmRecorridos = Double.parseDouble(kmRecorridosField.getText());
             boolean vip = vipCheckBox.isSelected();
             boolean estanciado = estanciaCheckBox.isSelected();
-
             Carnet carnet = carnetService.find(idCarnet);
             if (carnet == null) {
                 showAlert(Alert.AlertType.ERROR, "Error", "No se encontró el carnet con el ID ingresado.");
@@ -166,10 +191,11 @@ public class SellarAlojarController implements Initializable {
                 estancia.setPeregrino(peregrino);
                 estanciaService.saveEstancia(estancia);
             }
-
+            crearConjuntoContratado();
             showAlert(Alert.AlertType.INFORMATION, "Éxito", "Carnet actualizado correctamente.");
             
             stageManager.switchScene(FxmlView.MENU_PARADA);
+            
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Por favor, ingresa valores numéricos válidos.");
         } catch (Exception e) {
@@ -209,5 +235,58 @@ public class SellarAlojarController implements Initializable {
         for (Peregrino peregrino : peregrinos) {
             peregrinoComboBox.getItems().add(peregrino.getId() + " - " + peregrino.getNombre());
         }
+    }
+    private void cargarServicios() {
+        Long idParada = Sesion.getSesion().getId();
+        
+        
+
+        List<Servicio> servicios = db4oService.obtenerServiciosPorParada(idParada);
+        
+        if (servicios.isEmpty()) {
+            showAlert(Alert.AlertType.INFORMATION, "Información", "No hay servicios disponibles para esta parada.");
+        }
+
+        serviciosTableView.getItems().setAll(servicios);
+    }
+   private void crearConjuntoContratado() {
+      Long idParada = Sesion.getSesion().getId();
+
+
+        List<Servicio> serviciosSeleccionados = new ArrayList<>(serviciosTableView.getSelectionModel().getSelectedItems());
+
+        if (serviciosSeleccionados.isEmpty()) {
+           showAlert(Alert.AlertType.ERROR, "Error", "Debe seleccionar al menos un servicio.");
+            return;
+      }
+
+       String modoPagoTexto = modoPagoField.getText().trim();
+        String extrasTexto = extrasField.getText().trim();
+
+        if (modoPagoTexto.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Debe ingresar un modo de pago.");
+            return;
+       }
+
+       char modoPago = modoPagoTexto.charAt(0); 
+
+       double precioTotal = serviciosSeleccionados.stream().mapToDouble(Servicio::getPrecio).sum();
+
+        List<Long> idServicios = new ArrayList<>();
+        for (Servicio servicio : serviciosSeleccionados) {
+            idServicios.add(servicio.getId());
+        }
+
+        ConjuntoContratado conjunto = new ConjuntoContratado();
+        ; 
+       conjunto.setIdEstancia(idParada);
+        conjunto.setModoPago(modoPago);
+        conjunto.setExtra(extrasTexto);
+       conjunto.setPrecioTotal(precioTotal);
+       conjunto.setIdServivcio(idServicios);
+
+       db4oService.guardarConjuntoContratado(conjunto);
+
+      showAlert(Alert.AlertType.INFORMATION, "Éxito", "Conjunto de servicios contratado correctamente.");
     }
 }

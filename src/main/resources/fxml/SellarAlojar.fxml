@@ -5,6 +5,8 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -23,8 +25,11 @@
         <RowConstraints minHeight="40.0" vgrow="ALWAYS" /> <!-- Fila para el título -->
         <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
         <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
+        <RowConstraints minHeight="30.0" vgrow="ALWAYS" />        
         <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
-        <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
+      <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
+      <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
+      <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
         <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
          <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
           <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
@@ -62,7 +67,7 @@
          <Insets left="10.0" />
       </GridPane.margin></Label>
 
-    <HBox alignment="CENTER" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="10">
+    <HBox alignment="CENTER" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="13">
         <Button fx:id="sellarButton" onAction="#sellarAlojar" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Sellar/Alojarse" />
         <Button fx:id="salir" onAction="#salir" style="-fx-background-color: #b0bec5; -fx-text-fill: black; -fx-font-size: 16px;" text="Cancelar" />
     </HBox>
@@ -74,23 +79,46 @@
    </Label>
    <CheckBox fx:id="estanciaCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
    <CheckBox fx:id="vipCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-   <Label prefHeight="17.0" prefWidth="53.0" style="-fx-text-fill: yellow;" text="Nombre" textAlignment="CENTER" GridPane.rowIndex="5">
+   <Label prefHeight="17.0" prefWidth="53.0" style="-fx-text-fill: yellow;" text="Nombre" textAlignment="CENTER" GridPane.rowIndex="8">
       <GridPane.margin>
          <Insets left="10.0" />
       </GridPane.margin>
    </Label>
-   <Label prefHeight="17.0" prefWidth="53.0" style="-fx-text-fill: yellow;" text="Region" textAlignment="CENTER" GridPane.rowIndex="6">
+   <Label prefHeight="17.0" prefWidth="53.0" style="-fx-text-fill: yellow;" text="Region" textAlignment="CENTER" GridPane.rowIndex="9">
       <GridPane.margin>
          <Insets left="10.0" />
       </GridPane.margin>
    </Label>
-   <Label prefHeight="17.0" prefWidth="53.0" style="-fx-text-fill: yellow;" text="Responsable" textAlignment="CENTER" GridPane.rowIndex="7">
+   <Label prefHeight="17.0" prefWidth="53.0" style="-fx-text-fill: yellow;" text="Responsable" textAlignment="CENTER" GridPane.rowIndex="10">
       <GridPane.margin>
          <Insets left="10.0" />
       </GridPane.margin>
    </Label>
-   <Label fx:id="nombreLabel" text="Label" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-   <Label fx:id="regionLabel" text="Label" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-   <Label fx:id="responsableLabel" text="Label" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+   <Label fx:id="nombreLabel" text="Label" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+   <Label fx:id="regionLabel" text="Label" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+   <Label fx:id="responsableLabel" text="Label" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10" />
    <ComboBox fx:id="peregrinoComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+   <Label style="-fx-text-fill: yellow;" text="Servicio" GridPane.rowIndex="5">
+      <GridPane.margin>
+         <Insets left="10.0" />
+      </GridPane.margin>
+   </Label>
+   <Label style="-fx-text-fill: yellow;" text="Extras" GridPane.rowIndex="7">
+      <GridPane.margin>
+         <Insets left="10.0" />
+      </GridPane.margin>
+   </Label>
+   <Label style="-fx-text-fill: yellow;" text="Modo de pago" GridPane.rowIndex="6">
+      <GridPane.margin>
+         <Insets left="10.0" />
+      </GridPane.margin>
+   </Label>
+   <TableView fx:id="serviciosTableView" prefHeight="150.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+    <columns>
+        <TableColumn fx:id="nombreColumn" prefWidth="125.0" text="Nombre" />
+        <TableColumn fx:id="precioColumn" prefWidth="75.0" text="Precio" />
+    </columns>
+</TableView>
+   <TextField fx:id="modoPagoField" prefHeight="25.0" prefWidth="178.0" style="-fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+   <TextField fx:id="extrasField" prefHeight="25.0" prefWidth="178.0" style="-fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 </GridPane>

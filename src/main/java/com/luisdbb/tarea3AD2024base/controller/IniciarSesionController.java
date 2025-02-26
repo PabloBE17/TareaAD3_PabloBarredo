@@ -1,28 +1,36 @@
 package com.luisdbb.tarea3AD2024base.controller;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import com.luisdbb.tarea3AD2024base.config.StageManager;
-import com.luisdbb.tarea3AD2024base.modelo.Usuario;
-import com.luisdbb.tarea3AD2024base.modelo.Perfil;
-import com.luisdbb.tarea3AD2024base.modelo.Rol;
-import com.luisdbb.tarea3AD2024base.modelo.Sesion;
-import com.luisdbb.tarea3AD2024base.services.UsuarioServicio;
-import com.luisdbb.tarea3AD2024base.view.FxmlView;
-
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+import com.luisdbb.tarea3AD2024base.config.StageManager;
+import com.luisdbb.tarea3AD2024base.modelo.Perfil;
+import com.luisdbb.tarea3AD2024base.modelo.Rol;
+import com.luisdbb.tarea3AD2024base.modelo.Sesion;
+import com.luisdbb.tarea3AD2024base.modelo.Usuario;
+import com.luisdbb.tarea3AD2024base.services.UsuarioServicio;
+import com.luisdbb.tarea3AD2024base.view.FxmlView;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+
+import javafx.scene.image.ImageView;
+import javafx.scene.web.WebView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 @Controller
 public class IniciarSesionController implements Initializable {
@@ -46,14 +54,15 @@ public class IniciarSesionController implements Initializable {
     private ImageView togglePassword;
     @FXML
     private Button loginButton;
-
+    @FXML
+    private WebView webView;
     @FXML
     private ImageView userIcon;
     @FXML
     
     
     private boolean PasswordVisible = false;
-
+    
     @FXML
     private void login(ActionEvent event) {
         String Username = username.getText();
@@ -141,6 +150,8 @@ public class IniciarSesionController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
     	 visiblePassword.setManaged(false);
          visiblePassword.setVisible(false);
+         webView.setVisible(false);
+         
     }
     private boolean validarAdministrador(String usuario, String contraseña) {
         Properties propiedades = new Properties();
@@ -157,6 +168,26 @@ public class IniciarSesionController implements Initializable {
         } catch (IOException e) {
             System.err.println("Error al leer admin.properties: " + e.getMessage());
             return false;
+        }
+    }
+    @FXML
+    private void mostrarAyuda() {
+        try {
+            // Cargar el archivo HTML desde los recursos
+            URL url = getClass().getResource("/tarea3AD2024/src/main/resources/html/InicioSesionHtml.html");
+            if (url == null) {
+                throw new NullPointerException();
+            }
+            webView.getEngine().load(url.toExternalForm());
+
+            // Hacer visible el WebView
+            webView.setVisible(true);
+        } catch (NullPointerException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Archivo de Ayuda no encontrado");
+            alert.setContentText("Por favor, verifica que el archivo 'help.html' esté en la ruta '/ayuda/'.");
+            alert.showAndWait();
         }
     }
 }

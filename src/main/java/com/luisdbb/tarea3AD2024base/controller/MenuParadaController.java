@@ -39,7 +39,8 @@ public class MenuParadaController implements Initializable {
         stageManager.switchScene(FxmlView.LOGIN);
     }
 	
-	 private void showAlert(Alert.AlertType alertType, String title, String message) {
+	 @SuppressWarnings("unused")
+	private void showAlert(Alert.AlertType alertType, String title, String message) {
 	        Alert alert = new Alert(alertType);
 	        alert.setTitle(title);
 	        alert.setHeaderText(null);

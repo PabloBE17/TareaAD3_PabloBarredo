@@ -92,6 +92,17 @@ public enum FxmlView {
 		            return "/fxml/MenuAdmin.fxml";
 		        }
 	    },
+	 AÑADIR_SERVICIO {
+	        @Override
+	        public String getTitle() {
+	            return getStringFromResourceBundle("AnadirServicio.title");
+	        }
+
+	        @Override
+	        public String getFxmlFile() {
+	            return "/fxml/AnadirServicio.fxml";
+	        }
+	    },
 	 AÑADIR_PARADA{
 	    	 @Override
 		        public String getTitle() {

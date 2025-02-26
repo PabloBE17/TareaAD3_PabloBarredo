@@ -1,10 +1,15 @@
 package com.luisdbb.tarea3AD2024base;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.luisdbb.tarea3AD2024base.view.FxmlView;
+
+import jakarta.annotation.PreDestroy;
+
+import com.luisdbb.tarea3AD2024base.config.Db4oManager;
 import com.luisdbb.tarea3AD2024base.config.StageManager;
 
 import javafx.application.Application;
@@ -15,6 +20,8 @@ public class Tarea3Ad2024baseApplication extends Application {
 
 	protected ConfigurableApplicationContext springContext;
 	protected StageManager stageManager;
+	 @Autowired
+	    private Db4oManager db4oManager;
 
 	@Override
 	public void init() throws Exception {
@@ -45,5 +52,10 @@ public class Tarea3Ad2024baseApplication extends Application {
 		String[] args = getParameters().getRaw().stream().toArray(String[]::new);
 		return builder.run(args);
 	}
+	
+	@PreDestroy 
+    public void onExit() {
+        db4oManager.closeConnection();
+    }
 
 }

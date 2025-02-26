@@ -1,5 +1,6 @@
 package com.luisdbb.tarea3AD2024base.modelo;
-
+import com.luisdbb.tarea3AD2024base.modelo.Perfil;
+ 
 public class Sesion {
 	
     private static Sesion sesion;

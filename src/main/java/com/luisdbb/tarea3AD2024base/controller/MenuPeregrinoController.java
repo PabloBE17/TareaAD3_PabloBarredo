@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import java.io.File;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.xml.parsers.DocumentBuilder;
@@ -19,7 +18,6 @@ import com.luisdbb.tarea3AD2024base.config.StageManager;
 import com.luisdbb.tarea3AD2024base.modelo.Carnet;
 import com.luisdbb.tarea3AD2024base.modelo.Estancia;
 import com.luisdbb.tarea3AD2024base.modelo.Parada;
-import com.luisdbb.tarea3AD2024base.modelo.Peregrino;
 import com.luisdbb.tarea3AD2024base.modelo.Sesion;
 import com.luisdbb.tarea3AD2024base.services.CarnetService;
 import com.luisdbb.tarea3AD2024base.services.EstanciaService;
@@ -33,8 +31,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import java.util.Optional;
-import java.util.Collections;
+
 @Controller
 public class MenuPeregrinoController implements Initializable {
 
@@ -43,7 +40,8 @@ public class MenuPeregrinoController implements Initializable {
 
     @Autowired
     private CarnetService carnetService;
-    @Autowired
+    @SuppressWarnings("unused")
+	@Autowired
     private PeregrinoService peregrinoService;
     @Autowired
     private EstanciaService estanciaService;

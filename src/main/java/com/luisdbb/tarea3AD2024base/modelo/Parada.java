@@ -25,9 +25,8 @@ public class Parada implements Serializable {
 			    joinColumns = @JoinColumn(name = "parada_id"),
 			    inverseJoinColumns = @JoinColumn(name = "peregrino_id")
 			)
-	    private List<Peregrino> peregrinosAlojados= new ArrayList<>(); 
 	    
-
+	    private List<Peregrino> peregrinosAlojados= new ArrayList<>(); 
 
 		@OneToMany(mappedBy = "parada")
 	    private List<Estancia> estancias= new ArrayList<>(); 

@@ -20,17 +20,24 @@ public class MenuAdministradorController implements Initializable{
     private StageManager stageManager;
 	@FXML
     private Button AñadirPeregrinoButton;
-    
+	@FXML
+    private Button AnadirServicioButton;
     @FXML
     private Button salirButton;
+    
 	@FXML
 	private void añadirPeregrino(ActionEvent event) {
 		stageManager.switchScene(FxmlView.AÑADIR_PARADA);
 	}
 	@FXML
+	private void añadirServicio(ActionEvent event) {
+		stageManager.switchScene(FxmlView.AÑADIR_SERVICIO);
+	}
+	@FXML
     private void salir(ActionEvent event) {
         stageManager.switchScene(FxmlView.LOGIN);
     }
+	@SuppressWarnings("unused")
 	private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

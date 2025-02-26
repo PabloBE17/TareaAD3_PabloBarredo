@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #003da8;
+        }
+        p {
+            font-size: 16px;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <h1>Inicio de Sesión</h1>
+    <p>Este módulo permite a los usuarios autenticarse en el sistema con sus credenciales.</p>
+    
+    <h2>Funcionamiento</h2>
+    <p>Cuando el usuario ingresa su <span class="highlight">nombre de usuario</span> y <span class="highlight">contraseña</span>, el sistema valida las credenciales y decide qué tipo de usuario ha iniciado sesión:</p>
+    
+    <ul>
+        <li><strong>Administrador:</strong> Si las credenciales coinciden con las almacenadas en el archivo <code>Admin.properties</code>, se redirige al menú de administrador.</li>
+        <li><strong>Peregrino:</strong> Si el usuario está registrado como peregrino, se obtiene su ID y se redirige al menú de peregrino.</li>
+        <li><strong>Administrador de Parada:</strong> Si el usuario pertenece a una parada, se obtiene su ID y se muestra el menú correspondiente.</li>
+        <li><strong>Error:</strong> Si las credenciales son incorrectas, se muestra un mensaje de error.</li>
+    </ul>
+    
+    <h2>Otras Funcionalidades</h2>
+    <ul>
+        <li>Permite <strong>alternar la visibilidad</strong> de la contraseña.</li>
+        <li>Redirige a la vista de <strong>registro de peregrinos</strong> si el usuario lo desea.</li>
+    </ul>
+    
+    <h2>Mensajes de Alerta</h2>
+    <p>El sistema muestra diferentes alertas según la acción realizada:</p>
+    <ul>
+        <li><strong>Campos Vacíos:</strong> Si el usuario no completa los campos.</li>
+        <li><strong>Bienvenida:</strong> Si las credenciales son correctas.</li>
+        <li><strong>Error de Autenticación:</strong> Si las credenciales son incorrectas.</li>
+    </ul>
+    
+    <h2>Seguridad</h2>
+    <p>Las credenciales de administrador se almacenan en un archivo <code>Admin.properties</code>, mientras que el resto de usuarios se verifican con el servicio <code>UsuarioServicio</code>.</p>
+</body>
+</html>

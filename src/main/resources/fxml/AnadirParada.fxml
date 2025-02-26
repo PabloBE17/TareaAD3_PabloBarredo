@@ -75,6 +75,9 @@
             <Insets right="10.0" />
         </GridPane.margin>
     </TextField>
+    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
+        <ComboBox fx:id="nacionalidadComboBox" prefWidth="150.0" />
+    </HBox>
 
     
     <HBox alignment="CENTER" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="10">
