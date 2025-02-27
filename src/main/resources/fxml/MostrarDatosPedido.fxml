@@ -1,8 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1">
-	<!-- TODO Add Nodes -->
-</AnchorPane>
+<GridPane alignment="CENTER" fx:controller="com.luisdbb.tarea3AD2024base.controller.MostrarEnvioContoller" 
+          prefHeight="400.0" prefWidth="800.0" style="-fx-background-color: #003da8;" 
+          xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
 
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+   </columnConstraints>
+
+   <rowConstraints>
+      <RowConstraints maxHeight="104.0" minHeight="10.0" prefHeight="90.0" valignment="CENTER" vgrow="NEVER" />
+      <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="NEVER" /> 
+      <RowConstraints maxHeight="300.0" minHeight="10.0" prefHeight="131.0" vgrow="ALWAYS" />
+      <RowConstraints />
+   </rowConstraints>
+
+   <children>
+      <HBox alignment="CENTER" spacing="10.0" GridPane.rowIndex="0">
+         <children>
+            <Text fill="YELLOW" strokeType="OUTSIDE" strokeWidth="0.0" text="LISTA DE ENVIOS" 
+                  textAlignment="CENTER" wrappingWidth="400.0">
+               <font>
+                  <Font size="29.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+
+      <!-- Tabla de envíos -->
+      <VBox alignment="CENTER" spacing="10.0" GridPane.rowIndex="2">
+         <TableView fx:id="enviosTable" prefHeight="200.0" prefWidth="780.0">
+            <columns>
+               <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
+               <TableColumn fx:id="pesoColumn" prefWidth="80.0" text="Peso (kg)" />
+               <TableColumn fx:id="volumenColumn" prefWidth="100.0" text="Volumen (cm³)" />
+               <TableColumn fx:id="urgenteColumn" prefWidth="80.0" text="Urgente" />
+               <TableColumn fx:id="direccionColumn" prefWidth="150.0" text="Dirección" />
+               <TableColumn fx:id="localidadColumn" prefWidth="100.0" text="Localidad" />
+               <TableColumn fx:id="idParadaColumn" prefWidth="80.0" text="ID Parada" />
+            </columns>
+         </TableView>
+
+         <!-- Botón de salir -->
+         <HBox alignment="CENTER" spacing="10.0">
+            <children>
+               <Button fx:id="salirBoton" onAction="#salir" prefWidth="150.0" 
+                       style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Salir" />
+            </children>
+         </HBox>
+      </VBox>
+   </children>
+</GridPane>

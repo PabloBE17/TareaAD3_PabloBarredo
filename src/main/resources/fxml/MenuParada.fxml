@@ -9,6 +9,7 @@
       <Label alignment="CENTER" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: yellow;" text="GESTIÓN DE PARADA" />
       <Button   fx:id="sellarButton" onAction="#Sellar" prefHeight="35.0" prefWidth="201.0" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Sellar/Alojar" />
       <Button  fx:id="exportarButton" onAction="#ExportarParada" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Exportar Datos de Parada" />
+      <Button  fx:id="mostrarParadaButton" onAction="#MostrarPedidos" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Mostrar Envios" />
       <Button  fx:id="salirButton" onAction="#Salir" prefHeight="35.0" prefWidth="203.0" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Salir" />
    </children>
 </VBox>

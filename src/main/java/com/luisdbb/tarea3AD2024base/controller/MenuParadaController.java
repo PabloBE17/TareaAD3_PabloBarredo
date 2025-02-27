@@ -26,6 +26,9 @@ public class MenuParadaController implements Initializable {
 	    
 	    @FXML
 	    private Button salirButton;
+	    @FXML
+	    private Button mostrarParadaButton;
+	    
 	@FXML
     private void ExportarParada(ActionEvent event) {
         stageManager.switchScene(FxmlView.PANTALLA_PARADA);
@@ -35,9 +38,14 @@ public class MenuParadaController implements Initializable {
         stageManager.switchScene(FxmlView.SELLAR_ALOJAR);
     }
 	@FXML
+    private void MostrarPedidos(ActionEvent event) {
+        stageManager.switchScene(FxmlView.MOSTRAR_PEDIDO);
+    }
+	@FXML
     private void Salir(ActionEvent event) {
         stageManager.switchScene(FxmlView.LOGIN);
     }
+	
 	
 	 @SuppressWarnings("unused")
 	private void showAlert(Alert.AlertType alertType, String title, String message) {

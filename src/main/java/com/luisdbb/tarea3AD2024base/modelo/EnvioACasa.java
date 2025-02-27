@@ -1,8 +1,16 @@
 package com.luisdbb.tarea3AD2024base.modelo;
 
 import jakarta.persistence.Embedded;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+@Entity
+@Table(name = "envios_a_casa")
 public class EnvioACasa {
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private double peso;
 	private int volumen;

@@ -13,6 +13,7 @@
          </VBox.margin></Label>
       <Button fx:id="AñadirPeregrinoButton" onAction="#añadirPeregrino" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Añadir Parada" />
 	<Button fx:id="AnadirServicioButton" onAction="#añadirServicio" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Añadir Servicio" />
+	<Button fx:id="AnadirServicioButton" onAction="#editarServicio" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Editar Servicio" />
       <Button fx:id="salirButton" onAction="#salir" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Salir" />
    </children>
 </VBox>

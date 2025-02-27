@@ -34,9 +34,14 @@ public class MenuAdministradorController implements Initializable{
 		stageManager.switchScene(FxmlView.AÑADIR_SERVICIO);
 	}
 	@FXML
+	private void editarServicio(ActionEvent event) {
+		stageManager.switchScene(FxmlView.EDITAR_SERVICIO);
+	}
+	@FXML
     private void salir(ActionEvent event) {
         stageManager.switchScene(FxmlView.LOGIN);
     }
+	
 	@SuppressWarnings("unused")
 	private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);

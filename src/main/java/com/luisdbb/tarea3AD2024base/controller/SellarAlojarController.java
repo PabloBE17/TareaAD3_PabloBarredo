@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import com.luisdbb.tarea3AD2024base.config.StageManager;
 import com.luisdbb.tarea3AD2024base.modelo.Carnet;
 import com.luisdbb.tarea3AD2024base.modelo.ConjuntoContratado;
+import com.luisdbb.tarea3AD2024base.modelo.Direccion;
+import com.luisdbb.tarea3AD2024base.modelo.EnvioACasa;
 import com.luisdbb.tarea3AD2024base.modelo.Estancia;
 import com.luisdbb.tarea3AD2024base.modelo.Parada;
 import com.luisdbb.tarea3AD2024base.modelo.Peregrino;
@@ -18,6 +20,7 @@ import com.luisdbb.tarea3AD2024base.modelo.Servicio;
 import com.luisdbb.tarea3AD2024base.modelo.Sesion;
 import com.luisdbb.tarea3AD2024base.services.CarnetService;
 import com.luisdbb.tarea3AD2024base.services.Db4oServicio;
+import com.luisdbb.tarea3AD2024base.services.EnvioService;
 import com.luisdbb.tarea3AD2024base.services.EstanciaService;
 import com.luisdbb.tarea3AD2024base.services.ParadaService;
 import com.luisdbb.tarea3AD2024base.services.PeregrinoService;
@@ -67,7 +70,7 @@ public class SellarAlojarController implements Initializable {
     private TextField extrasField;
     @FXML
     private Label nombreLabel;
-
+    
     @FXML
     private Label regionLabel;
 
@@ -90,6 +93,22 @@ public class SellarAlojarController implements Initializable {
     private Button sellarButton;
     @FXML
     private Button salir;
+    @Autowired
+    private EnvioService envioService;
+
+    @FXML
+    private TextField direccionField;
+    @FXML
+    private TextField localidadField;
+    @FXML
+    private TextField pesoField;
+    @FXML
+    private TextField dimensionesField;
+    @FXML
+    private CheckBox envioUrgenteCheckBox;
+    @FXML
+    private Button enviarButton;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -192,6 +211,8 @@ public class SellarAlojarController implements Initializable {
                 estanciaService.saveEstancia(estancia);
             }
             crearConjuntoContratado();
+            procesarEnvio();
+            
             showAlert(Alert.AlertType.INFORMATION, "Éxito", "Carnet actualizado correctamente.");
             
             stageManager.switchScene(FxmlView.MENU_PARADA);
@@ -289,4 +310,58 @@ public class SellarAlojarController implements Initializable {
 
       showAlert(Alert.AlertType.INFORMATION, "Éxito", "Conjunto de servicios contratado correctamente.");
     }
+   private void procesarEnvio() {
+       try {
+           if (direccionField.getText().trim().isEmpty() || localidadField.getText().trim().isEmpty()) {
+               showAlert(Alert.AlertType.ERROR, "Error", "Debe completar la dirección y localidad.");
+               return;
+           }
+
+           double peso = Double.parseDouble(pesoField.getText().trim());
+           int volumen = Integer.parseInt(dimensionesField.getText().trim());
+           boolean urgente = envioUrgenteCheckBox.isSelected();
+
+           if (peso <= 0 || volumen <= 0) {
+               showAlert(Alert.AlertType.ERROR, "Error", "El peso y volumen deben ser valores positivos.");
+               return;
+           }
+
+           Long idParada = Sesion.getSesion().getId();
+           Parada parada = paradaService.findParadaById(idParada);
+           if (parada == null) {
+               showAlert(Alert.AlertType.ERROR, "Error", "No se encontró la parada en la base de datos.");
+               return;
+           }
+
+           EnvioACasa envio = new EnvioACasa();
+           envio.setPeso(peso);
+           envio.setVolumen(volumen);
+           envio.setUrgente(urgente);
+           envio.setIdParada(idParada);
+
+           Direccion direccion = new Direccion();
+           direccion.setDireccion(direccionField.getText().trim());
+           direccion.setLocalidad(localidadField.getText().trim());
+           envio.setDireccion(direccion);
+
+           envioService.guardarEnvio(envio);
+
+           showAlert(Alert.AlertType.INFORMATION, "Éxito", "El paquete ha sido enviado correctamente.");
+           limpiarCampos();
+
+       } catch (NumberFormatException e) {
+           showAlert(Alert.AlertType.ERROR, "Error", "Ingrese valores numéricos válidos para peso y dimensiones.");
+       } catch (Exception e) {
+           showAlert(Alert.AlertType.ERROR, "Error", "Ocurrió un problema al procesar el envío.");
+           e.printStackTrace();
+       }
+   }
+
+   private void limpiarCampos() {
+       direccionField.clear();
+       localidadField.clear();
+       pesoField.clear();
+       dimensionesField.clear();
+       envioUrgenteCheckBox.setSelected(false);
+   }
 }

@@ -5,16 +5,16 @@ import java.io.Serializable;
 import jakarta.persistence.Embeddable;
 @Embeddable
 public class Direccion implements Serializable{
-private long id;
+private long idDireccion;
 private String direccion;
 private String localidad;
 
 
 public long getId() {
-	return id;
+	return idDireccion;
 }
 public void setId(long id) {
-	this.id = id;
+	this.idDireccion = id;
 }
 public String getDireccion() {
 	return direccion;
@@ -30,7 +30,7 @@ public void setLocalidad(String localidad) {
 }
 @Override
 public String toString() {
-	return "Direccion [id=" + id + ", direccion=" + direccion + ", localidad=" + localidad + "]";
+	return "Direccion [id=" + idDireccion + ", direccion=" + direccion + ", localidad=" + localidad + "]";
 }
 
 

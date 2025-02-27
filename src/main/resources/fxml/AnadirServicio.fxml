@@ -67,8 +67,8 @@
     </HBox>
    <TableView fx:id="paradasTableView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
      <columns>
-       <TableColumn fx:id="idColumn" prefWidth="75.0" text="C1" />
-       <TableColumn fx:id="nombreColumn" prefWidth="75.0" text="C2" />
+       <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID" />
+       <TableColumn fx:id="nombreColumn" prefWidth="75.0" text="NOMBRE" />
      </columns>
    </TableView>
     

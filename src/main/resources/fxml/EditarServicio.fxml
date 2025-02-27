@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="gridPane" hgap="12" style="-fx-background-color: #003da8;" vgap="12" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.luisdbb.tarea3AD2024base.controller.EditarServicioController">
+    
+    <!-- Configuración de columnas -->
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" />
+        <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
+        <ColumnConstraints hgrow="ALWAYS" minWidth="300.0" />
+    </columnConstraints>
+    
+    <!-- Configuración de filas -->
+    <rowConstraints>
+        <RowConstraints minHeight="40.0" vgrow="ALWAYS" />
+        <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
+        <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
+        <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
+        <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
+        <RowConstraints minHeight="30.0" vgrow="ALWAYS" />
+    </rowConstraints>
+    
+    <!-- Título -->
+    <Label alignment="CENTER" prefHeight="27.0" prefWidth="343.0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: yellow;" text="Editar Servicio" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0" />
+    
+    <!-- Campos de entrada -->
+    <Label style="-fx-text-fill: yellow;" text="Nombre del Servicio" GridPane.rowIndex="2">
+        <GridPane.margin>
+            <Insets left="10.0" />
+        </GridPane.margin>
+    </Label>
+    <TextField fx:id="NombreServicioField" prefHeight="25.0" prefWidth="178.0" style="-fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="2">
+        <GridPane.margin>
+            <Insets right="10.0" />
+        </GridPane.margin>
+    </TextField>
+
+    <Label style="-fx-text-fill: yellow;" text="Precio del servicio:" GridPane.rowIndex="3">
+        <GridPane.margin>
+            <Insets left="10.0" />
+        </GridPane.margin>
+    </Label>
+    <TextField fx:id="PrecioServicioField" prefHeight="25.0" prefWidth="178.0" style="-fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="3">
+        <GridPane.margin>
+            <Insets right="10.0" />
+        </GridPane.margin>
+    </TextField>
+
+    <Label style="-fx-text-fill: yellow;" text="Paradas asociadas" GridPane.rowIndex="4">
+        <GridPane.margin>
+            <Insets left="10.0" />
+        </GridPane.margin>
+    </Label>
+
+    <!-- Tabla de paradas -->
+    <TableView fx:id="paradasTableView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <columns>
+            <TableColumn fx:id="idParadaColumn" prefWidth="75.0" text="ID" />
+            <TableColumn fx:id="nombreParadaColumn" prefWidth="75.0" text="Nombre" />
+        </columns>
+    </TableView>
+
+    <!-- Botones -->
+    <HBox alignment="CENTER" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
+        <Button fx:id="GuardarButton" onAction="#actualizarServicio" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Guardar" />
+        <Button fx:id="CancelarButton" onAction="#cerrarVentana" style="-fx-background-color: #b0bec5; -fx-text-fill: black; -fx-font-size: 16px;" text="Cancelar" />
+    </HBox>
+
+    <!-- Tabla de servicios -->
+    <TableView fx:id="tablaServicios" prefHeight="300.0" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="5">
+        <columns>
+            <TableColumn fx:id="idServicioColumn" prefWidth="100.0" text="ID" />
+            <TableColumn fx:id="nombreServicioColumn" prefWidth="150.0" text="Nombre" />
+        </columns>
+    </TableView>
+
+</GridPane>
