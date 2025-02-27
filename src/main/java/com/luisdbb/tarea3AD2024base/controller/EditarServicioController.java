@@ -24,6 +24,7 @@ import javafx.scene.control.TextField;
 
 @Controller
 public class EditarServicioController {
+	
 
     @Autowired
     private Db4oServicio db4oServicio;
@@ -86,9 +87,20 @@ public class EditarServicioController {
     }
 
     private void cargarParadas() {
-        List<Parada> paradas = paradaService.findAll();
+        List<Parada> paradas = paradaService.findAll(); 
         paradasTableView.getItems().setAll(paradas);
-        paradasTableView.getSelectionModel().setSelectionMode(javafx.scene.control.SelectionMode.MULTIPLE); 
+        paradasTableView.getSelectionModel().setSelectionMode(javafx.scene.control.SelectionMode.MULTIPLE);
+
+        if (servicioSeleccionado != null) {
+            List<Long> idParadasServicio = servicioSeleccionado.getIdParadas(); 
+
+            paradasTableView.getSelectionModel().clearSelection();
+            for (int i = 0; i < paradas.size(); i++) {
+                if (idParadasServicio.contains(paradas.get(i).getId())) {
+                    paradasTableView.getSelectionModel().select(i);
+                }
+            }
+        }
     }
     
     private void seleccionarServicio(Servicio servicio) {
@@ -96,6 +108,7 @@ public class EditarServicioController {
             this.servicioSeleccionado = servicio;
             NombreServicioField.setText(servicio.getNombre());
             PrecioServicioField.setText(String.valueOf(servicio.getPrecio()));
+            cargarParadas();
         }
     }
     @FXML
@@ -125,31 +138,44 @@ public class EditarServicioController {
             return;
         }
 
-        // Obtener las paradas seleccionadas
         List<Parada> paradasSeleccionadas = new ArrayList<>(paradasTableView.getSelectionModel().getSelectedItems());
+
         if (paradasSeleccionadas.isEmpty()) {
             mostrarAlerta("Error", "Debes seleccionar al menos una parada.");
             return;
         }
 
-        List<Long> idParadas = new ArrayList<>();
+        List<Long> nuevasIdParadas = new ArrayList<>();
         for (Parada parada : paradasSeleccionadas) {
-            if (!servicioSeleccionado.getIdParadas().contains(parada.getId())) {
-                servicioSeleccionado.getIdParadas().add(parada.getId());
+            nuevasIdParadas.add(parada.getId());
+        }
+
+        List<Long> paradasAntiguas = new ArrayList<>(servicioSeleccionado.getIdParadas());
+
+        List<Long> paradasEliminadas = new ArrayList<>();
+        for (Long idParada : paradasAntiguas) {
+            if (!nuevasIdParadas.contains(idParada)) {
+                paradasEliminadas.add(idParada);
             }
         }
+
+        servicioSeleccionado.setIdParadas(nuevasIdParadas);
 
         servicioSeleccionado.setNombre(nombre);
         servicioSeleccionado.setPrecio(precio);
 
         db4oServicio.guardarServicio(servicioSeleccionado);
-
+        mostrarAlerta("Éxito", "Servicio actualizado correctamente.\n"
+                + "Paradas añadidas: " + nuevasIdParadas.size() + "\n"
+                + "Paradas eliminadas: " + paradasEliminadas.size());
         mostrarAlerta("Éxito", "Servicio actualizado correctamente y asignado a las paradas seleccionadas.");
 
         NombreServicioField.clear();
         PrecioServicioField.clear();
 
         cargarServicios();
+        stageManager.switchScene(FxmlView.MENU_ADMIN);
+
     }
     
     private void mostrarAlerta(String titulo, String mensaje) {
