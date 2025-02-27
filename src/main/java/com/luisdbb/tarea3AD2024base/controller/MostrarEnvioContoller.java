@@ -79,6 +79,7 @@ public class MostrarEnvioContoller implements Initializable {
         direccionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDireccion().getDireccion()));
         localidadColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDireccion().getLocalidad()));
         idParadaColumn.setCellValueFactory(cellData -> new SimpleLongProperty(cellData.getValue().getIdParada()).asObject());
+        
     }
 
     @FXML

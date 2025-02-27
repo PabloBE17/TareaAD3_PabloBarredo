@@ -104,6 +104,8 @@ public class ServicioController {
 
         NombreServicioField.clear();
         PrecioServcioField.clear();
+        stageManager.switchScene(FxmlView.MENU_ADMIN);
+
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {

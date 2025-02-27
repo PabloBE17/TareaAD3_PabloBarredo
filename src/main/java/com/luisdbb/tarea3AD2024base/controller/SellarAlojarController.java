@@ -284,10 +284,10 @@ public class SellarAlojarController implements Initializable {
        String modoPagoTexto = modoPagoField.getText().trim();
         String extrasTexto = extrasField.getText().trim();
 
-        if (modoPagoTexto.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Debe ingresar un modo de pago.");
+        if (modoPagoTexto.isEmpty() || !modoPagoTexto.matches("[ETB]")) {
+            showAlert(Alert.AlertType.ERROR, "Error", "El método de pago debe ser 'E' (Efectivo), 'T' (Tarjeta) o 'B' (Bizum).");
             return;
-       }
+        }
 
        char modoPago = modoPagoTexto.charAt(0); 
 
