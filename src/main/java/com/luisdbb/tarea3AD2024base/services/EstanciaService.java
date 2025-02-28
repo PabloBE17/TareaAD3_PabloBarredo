@@ -55,5 +55,8 @@ public class EstanciaService {
     public List<Estancia> findByPeregrinoId(Long idPeregrino) {
         return estanciaRepository.findByPeregrinoId(idPeregrino);
     }
+    public Long obtenerUltimaEstanciaId() {
+        Estancia ultimaEstancia = estanciaRepository.findTopByOrderByIdDesc();
+        return ultimaEstancia.getId() ;
+    }
 }
-
