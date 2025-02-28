@@ -116,11 +116,7 @@ public class SellarAlojarController implements Initializable {
         cargarPeregrinos();
         estanciaCheckBox.setOnAction(event -> manejarCheckboxVip());
         vipCheckBox.setOnAction(event -> manejarCheckboxVip());
-        kmRecorridosField.textProperty().addListener((observable, viejoValor, nuevoValue) -> {
-            if (!nuevoValue.matches("\\d{0,4}")) { 
-                kmRecorridosField.setText(viejoValor); 
-            }
-        });
+        
         nombreColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNombre()));
         precioColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getPrecio()));
         cargarServicios();
@@ -152,6 +148,10 @@ public class SellarAlojarController implements Initializable {
                 showAlert(Alert.AlertType.ERROR, "Error", "Por favor, selecciona un peregrino y completa los kilómetros recorridos.");
                 return;
             }
+            if (!kmRecorridosField.getText().matches("\\d{1,4}")) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Los kilómetros recorridos deben ser un número de hasta 4 dígitos.");
+                return;
+            }
 
             String selectedPeregrino = peregrinoComboBox.getValue();
             Long idCarnet = Long.parseLong(selectedPeregrino.split(" - ")[0]);
@@ -181,6 +181,38 @@ public class SellarAlojarController implements Initializable {
                 showAlert(Alert.AlertType.WARNING, "Aviso", "El peregrino ya ha estado en esta parada y no puede volver a sellar.");
                 return;
             }
+            
+            boolean direccionLlena = !direccionField.getText().trim().isEmpty();
+            boolean localidadLlena = !localidadField.getText().trim().isEmpty();
+            boolean pesoLleno = !pesoField.getText().trim().isEmpty();
+            boolean dimensionesLlenas = !dimensionesField.getText().trim().isEmpty();
+
+            boolean datosEnvioCompletos = direccionLlena && localidadLlena && pesoLleno && dimensionesLlenas;
+            boolean datosEnvioIncompletos = (direccionLlena || localidadLlena || pesoLleno || dimensionesLlenas) && !datosEnvioCompletos;
+
+            boolean envioSeleccionado = serviciosTableView.getSelectionModel().getSelectedItems().stream()
+                    .anyMatch(servicio -> servicio.getNombre().equalsIgnoreCase("Envío a Casa"));
+
+            if (datosEnvioIncompletos) {
+                showAlert(Alert.AlertType.ERROR, "Error", "No se puede registrar la estancia porque hay datos de envio.");
+                return;
+            }
+
+            if (datosEnvioCompletos && !envioSeleccionado) {
+                showAlert(Alert.AlertType.ERROR, "Error", "No se puede registrar la estancia porque se intentó un envío sin seleccionar 'Envío a Casa' como servicio.");
+                return;
+            }
+            boolean envioIntentado = datosEnvioCompletos && envioSeleccionado;
+            boolean envioExitoso = false;
+
+            if (envioIntentado) {
+                envioExitoso = procesarEnvio();
+            }
+
+            if (envioIntentado && !envioExitoso) {
+                showAlert(Alert.AlertType.ERROR, "Error", "No se puede registrar la estancia porque hubo un error en el envío.");
+                return;
+            }
 
             carnet.setDistancia(carnet.getDistancia() + kmRecorridos);
             if (vip) {
@@ -199,6 +231,17 @@ public class SellarAlojarController implements Initializable {
             paradaService.save(parada);
             carnetService.save(carnet);
             
+            boolean conjuntoIntentado = hayDatosEnConjuntoContratado();
+            boolean conjuntoGuardado = false;
+
+            if (conjuntoIntentado) {
+                conjuntoGuardado = crearConjuntoContratado();
+            }
+
+            if (conjuntoIntentado && !conjuntoGuardado) {
+                showAlert(Alert.AlertType.ERROR, "Error", "No se puede guardar la estancia porque no estan completos todos los datos del conjunto contratado o no está seleccionada la estancia.");
+                return;
+            }
             
 
            
@@ -210,8 +253,8 @@ public class SellarAlojarController implements Initializable {
                 estancia.setPeregrino(peregrino);
                 estanciaService.saveEstancia(estancia);
             }
-            crearConjuntoContratado();
-            procesarEnvio();
+
+            
             
             showAlert(Alert.AlertType.INFORMATION, "Éxito", "Carnet actualizado correctamente.");
             
@@ -270,92 +313,119 @@ public class SellarAlojarController implements Initializable {
 
         serviciosTableView.getItems().setAll(servicios);
     }
-   private void crearConjuntoContratado() {
-      Long idParada = Sesion.getSesion().getId();
-
+   private boolean crearConjuntoContratado() {
+	   if (!estanciaCheckBox.isSelected()) {
+	        return false;
+	    }
+	   Long idEstancia = estanciaService.obtenerUltimaEstanciaId();
 
         List<Servicio> serviciosSeleccionados = new ArrayList<>(serviciosTableView.getSelectionModel().getSelectedItems());
 
+        boolean envioContratado = false;
+        
         if (serviciosSeleccionados.isEmpty()) {
            showAlert(Alert.AlertType.ERROR, "Error", "Debe seleccionar al menos un servicio.");
-            return;
+            return false;
       }
 
        String modoPagoTexto = modoPagoField.getText().trim();
         String extrasTexto = extrasField.getText().trim();
+        
 
         if (modoPagoTexto.isEmpty() || !modoPagoTexto.matches("[ETB]")) {
             showAlert(Alert.AlertType.ERROR, "Error", "El método de pago debe ser 'E' (Efectivo), 'T' (Tarjeta) o 'B' (Bizum).");
-            return;
+            return false;
         }
 
-       char modoPago = modoPagoTexto.charAt(0); 
+        Character modoPago = null;
+        if (!modoPagoTexto.isEmpty()) {
+            if (!modoPagoTexto.matches("[ETB]")) {
+                showAlert(Alert.AlertType.ERROR, "Error", "El método de pago debe ser 'E' (Efectivo), 'T' (Tarjeta) o 'B' (Bizum).");
+                return false;
+            }
+            modoPago = modoPagoTexto.charAt(0);
+        }
 
        double precioTotal = serviciosSeleccionados.stream().mapToDouble(Servicio::getPrecio).sum();
 
-        List<Long> idServicios = new ArrayList<>();
-        for (Servicio servicio : serviciosSeleccionados) {
-            idServicios.add(servicio.getId());
+       List<Long> idServicios = new ArrayList<>();
+       for (Servicio servicio : serviciosSeleccionados) {
+           idServicios.add(servicio.getId());
+
+           if (servicio.getNombre().equalsIgnoreCase("Envío a Casa")) {
+               envioContratado = true;
+           }
+       }
+        if (modoPago == null && extrasTexto.isEmpty() && idServicios.isEmpty()) {
+            return false; 
         }
 
         ConjuntoContratado conjunto = new ConjuntoContratado();
         ; 
-       conjunto.setIdEstancia(idParada);
+       conjunto.setIdEstancia(idEstancia);
         conjunto.setModoPago(modoPago);
         conjunto.setExtra(extrasTexto);
        conjunto.setPrecioTotal(precioTotal);
        conjunto.setIdServivcio(idServicios);
 
        db4oService.guardarConjuntoContratado(conjunto);
+      
 
       showAlert(Alert.AlertType.INFORMATION, "Éxito", "Conjunto de servicios contratado correctamente.");
+      return true;
     }
-   private void procesarEnvio() {
-       try {
-           if (direccionField.getText().trim().isEmpty() || localidadField.getText().trim().isEmpty()) {
-               showAlert(Alert.AlertType.ERROR, "Error", "Debe completar la dirección y localidad.");
-               return;
-           }
+   private boolean procesarEnvio() {
+	    try {
+	        if (direccionField.getText().trim().isEmpty() || localidadField.getText().trim().isEmpty()) {
+	            showAlert(Alert.AlertType.ERROR, "Error", "Debe completar la dirección y localidad.");
+	            return false;
+	        }
+	        if (!localidadField.getText().trim().matches("^[a-zA-ZÀ-ÿ\\s]+$")) {
+	            showAlert(Alert.AlertType.ERROR, "Error", "La localidad no puede contener números ni caracteres especiales.");
+	            return false;
+	        }
 
-           double peso = Double.parseDouble(pesoField.getText().trim());
-           int volumen = Integer.parseInt(dimensionesField.getText().trim());
-           boolean urgente = envioUrgenteCheckBox.isSelected();
+	        double peso = Double.parseDouble(pesoField.getText().trim());
+	        int volumen = Integer.parseInt(dimensionesField.getText().trim());
+	        boolean urgente = envioUrgenteCheckBox.isSelected();
 
-           if (peso <= 0 || volumen <= 0) {
-               showAlert(Alert.AlertType.ERROR, "Error", "El peso y volumen deben ser valores positivos.");
-               return;
-           }
+	        if (peso <= 0 || volumen <= 0) {
+	            showAlert(Alert.AlertType.ERROR, "Error", "El peso y volumen deben ser valores positivos.");
+	            return false;
+	        }
 
-           Long idParada = Sesion.getSesion().getId();
-           Parada parada = paradaService.findParadaById(idParada);
-           if (parada == null) {
-               showAlert(Alert.AlertType.ERROR, "Error", "No se encontró la parada en la base de datos.");
-               return;
-           }
+	        Long idParada = Sesion.getSesion().getId();
+	        Parada parada = paradaService.findParadaById(idParada);
+	        if (parada == null) {
+	            showAlert(Alert.AlertType.ERROR, "Error", "No se encontró la parada en la base de datos.");
+	            return false;
+	        }
 
-           EnvioACasa envio = new EnvioACasa();
-           envio.setPeso(peso);
-           envio.setVolumen(volumen);
-           envio.setUrgente(urgente);
-           envio.setIdParada(idParada);
+	        EnvioACasa envio = new EnvioACasa();
+	        envio.setPeso(peso);
+	        envio.setVolumen(volumen);
+	        envio.setUrgente(urgente);
+	        envio.setIdParada(idParada);
 
-           Direccion direccion = new Direccion();
-           direccion.setDireccion(direccionField.getText().trim());
-           direccion.setLocalidad(localidadField.getText().trim());
-           envio.setDireccion(direccion);
+	        Direccion direccion = new Direccion();
+	        direccion.setDireccion(direccionField.getText().trim());
+	        direccion.setLocalidad(localidadField.getText().trim());
+	        envio.setDireccion(direccion);
 
-           envioService.guardarEnvio(envio);
+	        envioService.guardarEnvio(envio);
 
-           showAlert(Alert.AlertType.INFORMATION, "Éxito", "El paquete ha sido enviado correctamente.");
-           limpiarCampos();
+	        showAlert(Alert.AlertType.INFORMATION, "Éxito", "El paquete ha sido enviado correctamente.");
+	        return true; 
 
-       } catch (NumberFormatException e) {
-           showAlert(Alert.AlertType.ERROR, "Error", "Ingrese valores numéricos válidos para peso y dimensiones.");
-       } catch (Exception e) {
-           showAlert(Alert.AlertType.ERROR, "Error", "Ocurrió un problema al procesar el envío.");
-           e.printStackTrace();
-       }
-   }
+	    } catch (NumberFormatException e) {
+	        showAlert(Alert.AlertType.ERROR, "Error", "Ingrese valores numéricos válidos para peso y dimensiones.");
+	        return false;
+	    } catch (Exception e) {
+	        showAlert(Alert.AlertType.ERROR, "Error", "Ocurrió un problema al procesar el envío.");
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
 
    private void limpiarCampos() {
        direccionField.clear();
@@ -364,4 +434,9 @@ public class SellarAlojarController implements Initializable {
        dimensionesField.clear();
        envioUrgenteCheckBox.setSelected(false);
    }
+   private boolean hayDatosEnConjuntoContratado() {
+	    return !modoPagoField.getText().trim().isEmpty() || 
+	           !extrasField.getText().trim().isEmpty() || 
+	           !serviciosTableView.getSelectionModel().getSelectedItems().isEmpty();
+	}
 }
