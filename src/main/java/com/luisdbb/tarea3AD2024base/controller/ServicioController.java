@@ -18,7 +18,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -54,20 +53,27 @@ public class ServicioController {
     private ParadaService paradaService;
     @FXML
     private void initialize() {
-    	AñadirButton.setOnAction(event -> crearServicio());
-        salir.setOnAction(event -> cerrarVentana());
         cargarParadas();
         idColumn.setCellValueFactory(cellData -> new SimpleLongProperty(cellData.getValue().getId()).asObject());
         nombreColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNombre()));
         paradasTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
-
+    @FXML
     private void crearServicio() {
         String nombre = NombreServicioField.getText().trim();
         String precioTexto = PrecioServcioField.getText().trim();
 
         if (nombre.isEmpty() || precioTexto.isEmpty()) {
             mostrarAlerta("Error", "Todos los campos son obligatorios.");
+            return;
+        }
+        if (!nombre.matches("^[a-zA-ZÀ-ÿ\\s]+$")) {
+            mostrarAlerta("Error", "El nombre del servicio solo puede contener letras y espacios.");
+            return;
+        }
+        
+        if (!precioTexto.matches("\\d{1,5}(\\.\\d{1,2})?")) {
+            mostrarAlerta("Error", "El precio debe tener como máximo 5 cifras enteras y hasta 2 decimales.");
             return;
         }
 
@@ -81,6 +87,14 @@ public class ServicioController {
         } catch (NumberFormatException e) {
             mostrarAlerta("Error", "Ingrese un precio válido.");
             return;
+        }
+        
+        List<Servicio> serviciosExistentes = db4oServicio.obtenerTodosLosServicios();
+        for (Servicio servicio : serviciosExistentes) {
+            if (servicio.getNombre().equalsIgnoreCase(nombre)) {
+                mostrarAlerta("Error", "El servicio '" + nombre + "' ya existe.");
+                return;
+            }
         }
 
         List<Parada> paradasSeleccionadas = new ArrayList<>(paradasTableView.getSelectionModel().getSelectedItems());
@@ -115,7 +129,7 @@ public class ServicioController {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-
+    @FXML
     private void cerrarVentana() {
 		stageManager.switchScene(FxmlView.MENU_ADMIN);
     }
