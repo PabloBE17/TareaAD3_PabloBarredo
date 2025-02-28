@@ -62,8 +62,8 @@
     
 
     <HBox alignment="CENTER" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="10">
-        <Button fx:id="AñadirButton" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Crear Servicio" />
-        <Button fx:id="salir" style="-fx-background-color: #b0bec5; -fx-text-fill: black; -fx-font-size: 16px;" text="Cancelar" />
+        <Button fx:id="AñadirButton" onAction="#crearServicio" style="-fx-background-color: yellow; -fx-text-fill: blue; -fx-font-size: 16px;" text="Crear Servicio" />
+        <Button fx:id="salir" onAction="#cerrarVentana" style="-fx-background-color: #b0bec5; -fx-text-fill: black; -fx-font-size: 16px;" text="Cancelar" />
     </HBox>
    <TableView fx:id="paradasTableView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
      <columns>
