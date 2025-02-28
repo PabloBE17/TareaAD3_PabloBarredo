@@ -125,6 +125,15 @@ public class EditarServicioController {
             mostrarAlerta("Error", "Todos los campos son obligatorios.");
             return;
         }
+        if (!nombre.matches("^[a-zA-ZÀ-ÿ\\s]+$")) {
+            mostrarAlerta("Error", "El nombre del servicio solo puede contener letras y espacios.");
+            return;
+        }
+        
+        if (!precioTexto.matches("\\d{1,5}(\\.\\d{1,2})?")) {
+            mostrarAlerta("Error", "El precio debe tener como máximo 5 cifras enteras y hasta 2 decimales.");
+            return;
+        }
 
         double precio;
         try {
