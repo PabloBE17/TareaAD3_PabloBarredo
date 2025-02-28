@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import com.luisdbb.tarea3AD2024base.modelo.EnvioACasa;
 import com.luisdbb.tarea3AD2024base.repositorios.EnvioRepository;
 
+import jakarta.transaction.Transactional;
+
 import java.util.List;
 
 @Service
@@ -13,7 +15,7 @@ public class EnvioService {
 
     @Autowired
     private EnvioRepository envioRepository;
-
+    @Transactional
     public void guardarEnvio(EnvioACasa envio) {
         envioRepository.save(envio);
     }
