@@ -18,4 +18,8 @@ public interface EstanciaReporsitory extends JpaRepository<Estancia, Long> {
     
     List<Estancia> findByParadaIdAndFechaBetween(Long paradaId, LocalDate fechaInicio, LocalDate fechaFin);
     
+    Estancia findTopByOrderByIdDesc();
+    
+    
+    
 	}
