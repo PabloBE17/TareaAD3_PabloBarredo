@@ -14,6 +14,7 @@ public enum FxmlView {
 			return "/fxml/Usuario.fxml";
 		}
 	},
+	
 	LOGIN {
 		@Override
 		public String getTitle() {
