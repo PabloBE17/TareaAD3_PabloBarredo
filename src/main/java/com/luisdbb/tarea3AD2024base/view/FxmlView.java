@@ -14,7 +14,7 @@ public enum FxmlView {
 			return "/fxml/Usuario.fxml";
 		}
 	},
-	LOGIN {
+	 LOGIN {
 		@Override
 		public String getTitle() {
 			return getStringFromResourceBundle("login.title");
